@@ -41,6 +41,10 @@ class Measurement(models.Model):
     def __str__(self):
         return f"{self.player.username} - {self.date}"
 
+    class Meta:
+        verbose_name = "測定記録"
+        verbose_name_plural = "測定記録"
+
 
 class MeasurementApproval(models.Model):
     measurement = models.ForeignKey(
@@ -55,3 +59,7 @@ class MeasurementApproval(models.Model):
 
     def __str__(self):
         return f"{self.measurement} by {self.approver.username}"
+
+    class Meta:
+        verbose_name = "承認履歴"
+        verbose_name_plural = "承認履歴"
