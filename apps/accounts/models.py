@@ -21,6 +21,12 @@ class CustomUser(AbstractUser):
         choices=[("active", "在籍中"), ("retired", "退部")],
         default="active",
     )
+    grade = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        verbose_name="学年",
+        help_text="部員の学年を入力してください（例：1〜3）",
+    )
 
     def is_manager(self):
         return self.role == "manager"

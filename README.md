@@ -1,6 +1,9 @@
 # quest_1
 
-
+## デプロイ
+- RenderとNeonでデプロイしています。
+- 本番環境（mainブランチ）URL:  
+  [https://quest-1-main.onrender.com/](https://quest-1-main.onrender.com/)
 
 ## Getting started
 
