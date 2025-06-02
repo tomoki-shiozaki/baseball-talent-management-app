@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     # local
+    "apps.accounts.apps.AccountsConfig",
+    "apps.home.apps.HomeConfig",
+    "apps.measurements.apps.MeasurementsConfig",
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -133,7 +136,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# AUTH_USER_MODEL = "accounts.CustomUser"
+AUTH_USER_MODEL = "accounts.CustomUser"
 
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
