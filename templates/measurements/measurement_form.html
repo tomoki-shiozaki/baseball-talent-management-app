@@ -3,9 +3,10 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<h1>測定結果を入力してください</h1>
-<form action="" method="post">{% csrf_token %}
-{{ form|crispy }}
-<button class="btn btn-success ml-2" type="submit">測定結果を作成する</button>
-</form>
+<h2>{{ player.username }} さんの測定記録を登録</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button class="btn btn-primary" type="submit">保存</button>
+  </form>
 {% endblock content %}

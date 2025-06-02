@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import DeleteView, CreateView
+from django.views.generic import ListView
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 
 from apps.measurements.models import Measurement
 
@@ -10,7 +13,6 @@ class MeasurementCreateView(LoginRequiredMixin, CreateView):
     model = Measurement
     template_name = "measurements/measurement_form.html"
     fields = (
-        "player",
         "date",
         "sprint_50m",
         "base_running",
@@ -22,6 +24,28 @@ class MeasurementCreateView(LoginRequiredMixin, CreateView):
         "squat",
     )
 
+    def dispatch(self, request, *args, **kwargs):
+        # URLのplayer_idから部員（プレイヤー）を取得
+        self.player = get_object_or_404(
+            get_user_model(), id=kwargs["player_id"], role="player"
+        )
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         form.instance.created_by = self.request.user
+        form.instance.player = self.player
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["player"] = self.player  # テンプレートで使えるように
+        return context
+
+
+class PlayerListView(ListView):
+    model = get_user_model()
+    template_name = "measurements/player_list.html"
+    context_object_name = "players"
+
+    def get_queryset(self):
+        return get_user_model().objects.filter(role="player", status="active")

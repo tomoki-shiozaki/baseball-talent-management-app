@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>部員一覧</h2>
+  <ul>
+    {% for player in players %}
+      <li>
+        {{ player.username }}（{{ player.grade }}年）
+        - <a href="{% url 'measurements:new' player.id %}">記録を登録</a>
+      </li>
+    {% empty %}
+      <li>部員が見つかりません。</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

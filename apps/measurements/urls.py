@@ -1,13 +1,14 @@
 from django.urls import path
 
-from apps.measurements.views import MeasurementCreateView
+from apps.measurements.views import MeasurementCreateView, PlayerListView
 
 app_name = "measurements"
 
 urlpatterns = [
     path(
-        "new/",
+        "players/<int:player_id>/new/",
         MeasurementCreateView.as_view(),
         name="new",
     ),
+    path("players/", PlayerListView.as_view(), name="player_list"),
 ]
