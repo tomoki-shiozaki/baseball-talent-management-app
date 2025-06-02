@@ -5,8 +5,8 @@
 
 <div class="container bg-light p-5 rounded-lg shadow-lg my-5">
     <div class="text-center mb-4">
-        <h1 class="display-3 mb-3 fw-bold">オセロアプリ</h1>
-        <p class="lead mb-4">Djangoで作成したシンプルなオセロゲームです。</p>
+        <h1 class="display-3 mb-3 fw-bold"> 神奈川県立JPT高校野球部<br>タレントマネジメントシステム</h1>
+        <p class="lead mb-4">野球部員の「タレントマネジメント」を行うアプリです。</p>
     </div>
 
     {% if user.is_authenticated %}
@@ -15,20 +15,16 @@
         <p class="h3 mb-4 fw-bold">{{ user.username }} さん、ようこそ！</p>
         <p class="lead">
             <a class="btn btn-primary btn-lg mx-3 my-2" href="{% url 'measurements:player_list' %}">測定結果入力</a>
-            <a class="btn btn-outline-secondary btn-lg mx-3 my-2" href="">新しい対局を始める</a>
+            <a class="btn btn-outline-secondary btn-lg mx-3 my-2" href="">機能２</a>
         </p>
     </div>
     {% else %}
     <!-- ログイン前のトップ画面 -->
     <div class="text-center">
-        <h2 class="h4 mb-4 fw-bold">アカウント登録で、対局データの保存や履歴確認が可能になります</h2>
+        <h2 class="h4 mb-4 fw-bold">ログインしてください</h2>
         <div class="lead mb-4">
             <a href="{% url 'login' %}" class="btn btn-outline-dark btn-lg mx-3 my-2">ログイン</a>
             <a href="{% url 'signup' %}" class="btn btn-dark btn-lg mx-3 my-2">新規登録</a>
-        </div>
-        <h2 class="h4 mb-4 fw-bold">ゲストとして今すぐプレイも可能です！</h2>
-        <div class="lead">
-            <a href="" class="btn btn-secondary btn-lg mx-3 my-2">ゲストでプレイ</a>
         </div>
     </div>
     {% endif %}
