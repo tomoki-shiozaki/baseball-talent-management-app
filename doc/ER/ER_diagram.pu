@@ -1,0 +1,25 @@
+@startuml ER
+skinparam defaultFontName "Noto Sans CJK JP"
+entity "ユーザーマスター" as User {
+  +ユーザーID <<PK>>
+  +ログイン名 <<UNIQUE>>
+  +メールアドレス
+  +パスワード
+  +レベル <<初心者/中級者/上級者>>
+}
+
+entity "ログインユーザーのローカル対戦" as AuthenticatedLocalGame {
+  +ゲームID <<PK>>
+  +ユーザーID <<FK>>
+  +作成日時
+  +更新日時
+  +黒のプレイヤー名
+  +白のプレイヤー名
+  +ターン
+  +盤面
+  +結果 <<対局中/黒/白/引き分け>>
+}
+
+User ||--o{ AuthenticatedLocalGame : ユーザーID
+
+@enduml
