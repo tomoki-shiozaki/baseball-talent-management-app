@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<h1>部員リスト</h1>
+<ul>
+    {% for player in players %}
+    <li>
+        {{ player.username }} - <a href="{% url 'measurements:player_measurement_list' player.id %}">記録を見る</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock content %}

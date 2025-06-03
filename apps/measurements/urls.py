@@ -3,23 +3,36 @@ from django.urls import path
 from apps.measurements.views import (
     MeasurementCreateView,
     PlayerListView,
-    MeasurementListView,
+    MyMeasurementListView,
+    MemberListView,
+    PlayerMeasurementListView,
 )
 
 app_name = "measurements"
 
 urlpatterns = [
-    # 測定結果入力
+    # マネージャー用。測定結果入力
     path(
         "players/<int:player_id>/new/",
         MeasurementCreateView.as_view(),
         name="new",
     ),
     path("players/", PlayerListView.as_view(), name="player_list"),
-    # 測定結果閲覧
+    # 部員用。自分の測定結果閲覧
     path(
         "",
-        MeasurementListView.as_view(),
-        name="list",
+        MyMeasurementListView.as_view(),
+        name="my_records",
+    ),
+    # コーチと監督用。部員の測定結果閲覧
+    path(
+        "members",
+        MemberListView.as_view(),
+        name="member_list",
+    ),
+    path(
+        "members/<int:player_id>/records/",
+        PlayerMeasurementListView.as_view(),
+        name="player_measurement_list",
     ),
 ]

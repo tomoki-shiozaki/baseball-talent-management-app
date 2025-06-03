@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.views.generic.edit import DeleteView, CreateView
 from django.views.generic import ListView
 from django.contrib.auth import get_user_model
@@ -10,6 +10,7 @@ from apps.measurements.models import Measurement
 
 
 # Create your views here.
+# マネージャー用
 class MeasurementCreateView(LoginRequiredMixin, CreateView):
     model = Measurement
     template_name = "measurements/measurement_form.html"
@@ -53,9 +54,38 @@ class PlayerListView(ListView):
         return get_user_model().objects.filter(role="player", status="active")
 
 
-class MeasurementListView(LoginRequiredMixin, ListView):
+# 部員用
+class MyMeasurementListView(LoginRequiredMixin, ListView):
     model = Measurement
-    template_name = "measurements/measurement_list.html"
+    template_name = "measurements/my_measurement_list.html"
+    context_object_name = "measurements"
 
     def get_queryset(self):
-        return Measurement.objects.filter(player=self.request.user)
+        return Measurement.objects.filter(player=self.request.user).order_by("-date")
+
+
+# コーチ・監督用
+class MemberListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = get_user_model()
+    template_name = "measurements/member_list.html"
+    context_object_name = "players"
+
+    def test_func(self):
+        # コーチ・監督のみアクセスOKにする
+        return self.request.user.role in ["coach", "director"]
+
+    def get_queryset(self):
+        return get_user_model().objects.filter(role="player", status="active")
+
+
+class PlayerMeasurementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = Measurement
+    template_name = "measurements/player_measurement_list.html"
+    context_object_name = "measurements"
+
+    def test_func(self):
+        return self.request.user.role in ["coach", "director"]
+
+    def get_queryset(self):
+        player_id = self.kwargs.get("player_id")
+        return Measurement.objects.filter(player_id=player_id).order_by("-date")

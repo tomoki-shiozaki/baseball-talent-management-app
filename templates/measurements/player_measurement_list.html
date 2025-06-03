@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}測定結果{% endblock title %}
+
+{% block content %}
+<h2>測定結果</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>選手名</th>
+            <th>測定日</th>
+            <th>身長</th>
+            <th>体重</th>
+            <!-- 他の項目 -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for m in measurements %}
+        <tr>
+            <td>{{ m.player.username }}</td>
+            <td>{{ m.date }}</td>
+            <td>{{ m.height }}</td>
+            <td>{{ m.weight }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}
