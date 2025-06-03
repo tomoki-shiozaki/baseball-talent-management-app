@@ -5,6 +5,15 @@
 {% block content %}
 <h2>{{ player_name }} さんの測定記録一覧</h2>
 
+<p>
+    並び順：
+    {% if current_order == "asc" %}
+    古い順（<a href="?order=desc">新しい順に変更</a>）
+    {% elif current_order == "desc" %}
+    新しい順（<a href="?order=asc">古い順に変更</a>）
+    {% endif %}
+</p>
+
 <table class="table table-striped">
     <thead>
         <tr>
