@@ -18,7 +18,7 @@ urlpatterns = [
     path("players/", PlayerListView.as_view(), name="player_list"),
     # 測定結果閲覧
     path(
-        "list/",
+        "",
         MeasurementListView.as_view(),
         name="list",
     ),
