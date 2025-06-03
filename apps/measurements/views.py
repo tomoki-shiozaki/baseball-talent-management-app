@@ -51,3 +51,11 @@ class PlayerListView(ListView):
 
     def get_queryset(self):
         return get_user_model().objects.filter(role="player", status="active")
+
+
+class MeasurementListView(LoginRequiredMixin, ListView):
+    model = Measurement
+    template_name = "measurements/measurement_list.html"
+
+    def get_queryset(self):
+        return Measurement.objects.filter(player=self.request.user)

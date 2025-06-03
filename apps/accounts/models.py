@@ -28,14 +28,18 @@ class CustomUser(AbstractUser):
         help_text="部員の学年を入力してください（例：1〜3）",
     )
 
+    @property
     def is_manager(self):
         return self.role == "manager"
 
+    @property
     def is_player(self):
         return self.role == "player"
 
+    @property
     def is_coach(self):
         return self.role == "coach"
 
+    @property
     def is_director(self):
         return self.role == "director"

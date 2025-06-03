@@ -14,8 +14,14 @@
     <div class="text-center">
         <p class="h3 mb-4 fw-bold">{{ user.username }} さん、ようこそ！</p>
         <p class="lead">
+            {% if user.is_manager %}
             <a class="btn btn-primary btn-lg mx-3 my-2" href="{% url 'measurements:player_list' %}">測定結果入力</a>
-            <a class="btn btn-outline-secondary btn-lg mx-3 my-2" href="">機能２</a>
+            {% endif %}
+            <a class="btn btn-outline-secondary btn-lg mx-3 my-2"
+                href="{% url 'measurements:list' %}">測定記録閲覧</a>
+            {% if user.is_coach or user.is_director %}
+            <!-- <a class="btn btn-warning btn-lg mx-3 my-2" href="{% url 'members:manage' %}">部員管理</a> -->
+            {% endif %}
         </p>
     </div>
     {% else %}
