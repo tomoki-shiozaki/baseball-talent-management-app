@@ -3,26 +3,41 @@
 {% block title %}測定結果{% endblock title %}
 
 {% block content %}
-<h2>測定結果</h2>
-<table class="table">
+<h2>{{ player_name }} さんの測定記録一覧</h2>
+
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>選手名</th>
             <th>測定日</th>
-            <th>身長</th>
-            <th>体重</th>
-            <!-- 他の項目 -->
+            <th>50m走（秒）</th>
+            <th>ベースランニング（秒）</th>
+            <th>遠投（m）</th>
+            <th>ストレート球速（km/h）</th>
+            <th>打球速度（km/h）</th>
+            <th>スイング速度（km/h）</th>
+            <th>ベンチプレス（kg）</th>
+            <th>スクワット（kg）</th>
         </tr>
     </thead>
     <tbody>
         {% for m in measurements %}
         <tr>
-            <td>{{ m.player.username }}</td>
             <td>{{ m.date }}</td>
-            <td>{{ m.height }}</td>
-            <td>{{ m.weight }}</td>
+            <td>{{ m.sprint_50m }}</td>
+            <td>{{ m.base_running }}</td>
+            <td>{{ m.long_throw }}</td>
+            <td>{{ m.straight_ball_speed }}</td>
+            <td>{{ m.hit_ball_speed }}</td>
+            <td>{{ m.swing_speed }}</td>
+            <td>{{ m.bench_press }}</td>
+            <td>{{ m.squat }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="9">記録がありません</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
 {% endblock content %}

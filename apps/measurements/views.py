@@ -63,6 +63,12 @@ class MyMeasurementListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Measurement.objects.filter(player=self.request.user).order_by("-date")
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # ログインユーザーのユーザー名をコンテキストに追加
+        context["player_name"] = self.request.user.username
+        return context
+
 
 # コーチ・監督用
 class MemberListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -89,3 +95,10 @@ class PlayerMeasurementListView(LoginRequiredMixin, UserPassesTestMixin, ListVie
     def get_queryset(self):
         player_id = self.kwargs.get("player_id")
         return Measurement.objects.filter(player_id=player_id).order_by("-date")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        player_id = self.kwargs.get("player_id")
+        player = get_object_or_404(get_user_model(), id=player_id)
+        context["player_name"] = player.username
+        return context
