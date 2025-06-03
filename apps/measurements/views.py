@@ -4,6 +4,7 @@ from django.views.generic.edit import DeleteView, CreateView
 from django.views.generic import ListView
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
 
 from apps.measurements.models import Measurement
 
@@ -23,6 +24,7 @@ class MeasurementCreateView(LoginRequiredMixin, CreateView):
         "bench_press",
         "squat",
     )
+    success_url = reverse_lazy("measurements:player_list")
 
     def dispatch(self, request, *args, **kwargs):
         # URLのplayer_idから部員（プレイヤー）を取得

@@ -16,27 +16,62 @@ class Measurement(models.Model):
     ]
 
     player = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE, related_name="measurements"
+        get_user_model(),
+        on_delete=models.CASCADE,
+        related_name="measurements",
+        verbose_name="選手",
     )
     created_by = models.ForeignKey(
         get_user_model(),
         on_delete=models.SET_NULL,
         null=True,
         related_name="created_measurements",
+        verbose_name="作成者",
     )
-    date = models.DateField()
+    date = models.DateField(
+        verbose_name="測定日",
+        help_text="日付を YYYY-MM-DD の形式で入力してください。例: 2025-01-01",
+    )
 
-    # 測定項目
-    sprint_50m = models.FloatField(help_text="50m走（秒）")
-    base_running = models.FloatField(help_text="ベースランニング（秒）")
-    long_throw = models.IntegerField(help_text="遠投（m）")
-    straight_ball_speed = models.IntegerField(help_text="ストレート球速（km/h）")
-    hit_ball_speed = models.IntegerField(help_text="打球速度（km/h）")
-    swing_speed = models.IntegerField(help_text="スイング速度（km/h）")
-    bench_press = models.IntegerField(help_text="ベンチプレス（kg）")
-    squat = models.IntegerField(help_text="スクワット（kg）")
+    sprint_50m = models.FloatField(
+        verbose_name="50m走（秒）",
+        help_text="50m走のタイム（秒）を入力してください",
+    )
+    base_running = models.FloatField(
+        verbose_name="ベースランニング（秒）",
+        help_text="ベースランニングのタイム（秒）を入力してください",
+    )
+    long_throw = models.IntegerField(
+        verbose_name="遠投（m）",
+        help_text="遠投距離（メートル）を入力してください",
+    )
+    straight_ball_speed = models.IntegerField(
+        verbose_name="ストレート球速（km/h）",
+        help_text="ストレートの球速（km/h）を入力してください",
+    )
+    hit_ball_speed = models.IntegerField(
+        verbose_name="打球速度（km/h）",
+        help_text="打球速度（km/h）を入力してください",
+    )
+    swing_speed = models.IntegerField(
+        verbose_name="スイング速度（km/h）",
+        help_text="スイング速度（km/h）を入力してください",
+    )
+    bench_press = models.IntegerField(
+        verbose_name="ベンチプレス（kg）",
+        help_text="ベンチプレスの重量（kg）を入力してください",
+    )
+    squat = models.IntegerField(
+        verbose_name="スクワット（kg）",
+        help_text="スクワットの重量（kg）を入力してください",
+    )
 
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="draft")
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="draft",
+        verbose_name="ステータス",
+    )
 
     def __str__(self):
         return f"{self.player.username} - {self.date}"
