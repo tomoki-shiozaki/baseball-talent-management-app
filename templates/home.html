@@ -20,6 +20,9 @@
             {% if user.is_player %}
             <a class="btn btn-outline-secondary btn-lg mx-3 my-2"
                 href="{% url 'measurements:my_records' %}">自分の測定記録閲覧</a>
+            <a class="btn btn-outline-success btn-lg mx-3 my-2" href="{% url 'approvals:pending' %}">
+                自分の承認待ち記録
+            </a>
             {% endif %}
             {% if user.is_coach or user.is_director %}
             <a class="btn btn-outline-secondary btn-lg mx-3 my-2"
