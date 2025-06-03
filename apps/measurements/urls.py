@@ -20,7 +20,7 @@ urlpatterns = [
     path("players/", PlayerListView.as_view(), name="player_list"),
     # 部員用。自分の測定結果閲覧
     path(
-        "",
+        "my-records",
         MyMeasurementListView.as_view(),
         name="my_records",
     ),

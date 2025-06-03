@@ -6,7 +6,8 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 
-from apps.measurements.models import Measurement, MeasurementApproval
+from apps.measurements.models import Measurement
+from apps.approvals.models import MeasurementApproval
 
 
 # Create your views here.
