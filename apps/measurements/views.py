@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 
-from apps.measurements.models import Measurement
+from apps.measurements.models import Measurement, MeasurementApproval
 
 
 # Create your views here.
@@ -37,7 +37,18 @@ class MeasurementCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         form.instance.player = self.player
-        return super().form_valid(form)
+        # 1. ステータスを承認待ちにセット
+        form.instance.status = "pending"
+        response = super().form_valid(form)
+        # 2. 部員本人の承認レコード（承認依頼）を作成
+        MeasurementApproval.objects.create(
+            measurement=self.object,
+            approver=self.player,
+            role="player",
+            step="self",
+            status="pending",  # 初期状態は承認待ち
+        )
+        return response
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
