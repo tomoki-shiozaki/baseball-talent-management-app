@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>{{ user.username }} さんの承認待ちの測定記録</h2>
+<h2>{{ user.username }} さんの測定記録の承認</h2>
 
-{% if measurements %}
 <table class="table table-striped">
     <thead>
         <tr>
@@ -15,11 +14,9 @@
             <th>スイング速度（km/h）</th>
             <th>ベンチプレス（kg）</th>
             <th>スクワット（kg）</th>
-            <th>操作</th>
         </tr>
     </thead>
     <tbody>
-        {% for m in measurements %}
         <tr>
             <td>{{ m.date }}</td>
             <td>{{ m.sprint_50m }}</td>
@@ -30,14 +27,12 @@
             <td>{{ m.swing_speed }}</td>
             <td>{{ m.bench_press }}</td>
             <td>{{ m.squat }}</td>
-            <td>
-                <a href="{% url 'approvals:player_approve' m.id %}">詳細・承認</a>
-            </td>
         </tr>
-        {% endfor %}
     </tbody>
 </table>
-{% else %}
-<p>承認待ちの測定記録はありません。</p>
-{% endif %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">送信</button>
+</form>
 {% endblock %}

@@ -45,3 +45,28 @@ class PendingApprovalListView(LoginRequiredMixin, ListView):
 
         else:
             return Measurement.objects.none()  # マネージャー・監督などは対象外
+
+
+class PlayerApprovalCreateView(LoginRequiredMixin, CreateView):
+    model = MeasurementApproval
+    template_name = "approvals/player_approval_form.html"
+    fields = ["status", "comment"]  # 承認 or 否認、コメント入力
+
+    def dispatch(self, request, *args, **kwargs):
+        self.measurement = get_object_or_404(Measurement, id=kwargs["measurement_id"])
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.measurement = self.measurement
+        form.instance.approver = self.request.user
+        form.instance.role = "player"
+        form.instance.step = "self"
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("home")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["m"] = self.measurement
+        return context

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from apps.approvals.views import PendingApprovalListView
+from apps.approvals.views import PendingApprovalListView, PlayerApprovalCreateView
 
 app_name = "approvals"
 
@@ -10,5 +10,10 @@ urlpatterns = [
         "pending/",
         PendingApprovalListView.as_view(),
         name="pending",
+    ),
+    path(
+        "player/approve/<int:measurement_id>/",
+        PlayerApprovalCreateView.as_view(),
+        name="player_approve",
     ),
 ]
