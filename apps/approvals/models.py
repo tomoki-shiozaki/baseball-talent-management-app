@@ -34,4 +34,9 @@ class MeasurementApproval(models.Model):
     class Meta:
         verbose_name = "承認履歴"
         verbose_name_plural = "承認履歴"
-        unique_together = ("measurement", "approver", "step")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["measurement", "approver", "step"],
+                name="unique_approval_once",
+            )
+        ]
