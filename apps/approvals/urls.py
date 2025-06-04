@@ -7,7 +7,7 @@ app_name = "approvals"
 urlpatterns = [
     # 部員用。自分の測定結果の承認
     path(
-        "approvals/",
+        "pending/",
         PendingApprovalListView.as_view(),
         name="pending",
     ),

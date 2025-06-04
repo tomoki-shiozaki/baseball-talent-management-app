@@ -6,6 +6,7 @@ from apps.measurements.models import Measurement
 
 # Create your models here.
 class MeasurementApproval(models.Model):
+    # 誰が承認するか。部員またはコーチ。
     STEP_CHOICES = [
         ("self", "部員による承認"),
         ("coach", "コーチの最終承認"),
@@ -18,10 +19,12 @@ class MeasurementApproval(models.Model):
     measurement = models.ForeignKey(
         Measurement, on_delete=models.CASCADE, related_name="approvals"
     )
+    # 誰がその承認をしたか
     approver = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    # 承認した人のロール
     role = models.CharField(max_length=10, choices=get_user_model().ROLE_CHOICES)
     step = models.CharField(max_length=10, choices=STEP_CHOICES)
-    approved_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES)
     comment = models.TextField(blank=True, null=True)
 

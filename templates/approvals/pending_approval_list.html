@@ -5,7 +5,7 @@
     {% for approval in approvals %}
     <li>
         {{ approval.measurement.player.username }} / {{ approval.measurement.date }}
-        <!-- <a href="{% url 'approvals:approval_detail' approval.id %}">確認・承認</a> -->
+        <a href="{% url 'approvals:approval_detail' approval.id %}">確認・承認</a>
     </li>
     {% empty %}
     <li>承認待ちはありません。</li>
