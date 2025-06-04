@@ -38,18 +38,8 @@ class MeasurementCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         form.instance.player = self.player
-        # 1. ステータスを承認待ちにセット
-        form.instance.status = "pending"
-        response = super().form_valid(form)
-        # 2. 部員本人の承認レコード（承認依頼）を作成
-        MeasurementApproval.objects.create(
-            measurement=self.object,
-            approver=self.player,
-            role="player",
-            step="self",
-            status="pending",  # 初期状態は承認待ち
-        )
-        return response
+        form.instance.status = "pending"  # 測定記録は承認待ちとして保存
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
