@@ -17,18 +17,28 @@
             {% if user.is_manager %}
             <a class="btn btn-primary btn-lg mx-3 my-2" href="{% url 'measurements:player_list' %}">測定結果入力</a>
             {% endif %}
+
             {% if user.is_player %}
-            <a class="btn btn-outline-secondary btn-lg mx-3 my-2"
-                href="{% url 'measurements:my_records' %}">自分の測定記録閲覧</a>
-            <a class="btn btn-outline-success btn-lg mx-3 my-2" href="{% url 'approvals:pending' %}">
-                承認が必要な記録を見る
-            </a>
-            {% endif %}
-            {% if user.is_coach or user.is_director %}
-            <a class="btn btn-outline-secondary btn-lg mx-3 my-2"
-                href="{% url 'measurements:member_list' %}">部員別測定記録閲覧</a>
-            <a class="btn btn-warning btn-lg mx-3 my-2" href="{% url 'members:list' %}">部員管理</a>
-            {% endif %}
+        <p>未承認の記録: {{ pending_count }} 件</p>
+        <a class="btn btn-outline-secondary btn-lg mx-3 my-2" href="{% url 'measurements:my_records' %}">自分の測定記録閲覧</a>
+        {% if pending_count > 0 %}
+        <a class="btn btn-outline-success btn-lg mx-3 my-2" href="{% url 'approvals:pending' %}">
+            承認が必要な記録を見る
+        </a>
+        {% endif %}
+        {% endif %}
+
+        {% if user.is_coach %}
+        <p>未承認の記録（コーチ承認待ち）: {{ coach_pending_count }} 件</p>
+        {% if coach_pending_count > 0 %}
+        <a href="">承認待ちの記録を見る</a>
+        {% endif %}
+        {% endif %}
+
+        {% if user.is_coach or user.is_director %}
+        <a class="btn btn-outline-secondary btn-lg mx-3 my-2" href="{% url 'measurements:member_list' %}">部員別測定記録閲覧</a>
+        <a class="btn btn-warning btn-lg mx-3 my-2" href="{% url 'members:list' %}">部員管理</a>
+        {% endif %}
         </p>
     </div>
     {% else %}
