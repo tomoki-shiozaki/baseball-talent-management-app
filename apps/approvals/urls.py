@@ -4,7 +4,7 @@ from apps.approvals.views import (
     PlayerPendingApprovalListView,
     PlayerApprovalCreateView,
     CoachPendingApprovalListView,
-    # CoachApprovalCreateView,
+    CoachApprovalCreateView,
 )
 
 app_name = "approvals"
@@ -27,9 +27,9 @@ urlpatterns = [
         CoachPendingApprovalListView.as_view(),
         name="coach_pending_approvals",
     ),
-    # path(
-    #     "coach/approve/<int:measurement_id>/",
-    #     CoachApprovalCreateView.as_view(),
-    #     name="coach_approve",
-    # ),
+    path(
+        "coach/approve/<int:measurement_id>/",
+        CoachApprovalCreateView.as_view(),
+        name="coach_approve",
+    ),
 ]

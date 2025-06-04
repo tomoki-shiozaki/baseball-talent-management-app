@@ -1,14 +1,12 @@
 {% extends "base.html" %}
-{% block title %}コーチ承認待ち{% endblock %}
+{% block title %}コーチによる測定記録の承認{% endblock %}
 {% block content %}
-<h2>コーチとして承認が必要な測定記録</h2>
+<h2>{{ m.player.username }} さんの測定記録の承認</h2>
 
-{% if measurements %}
 <table class="table table-striped">
     <thead>
         <tr>
             <th>測定日</th>
-            <th>部員</th>
             <th>50m走（秒）</th>
             <th>ベースランニング（秒）</th>
             <th>遠投（m）</th>
@@ -17,14 +15,11 @@
             <th>スイング速度（km/h）</th>
             <th>ベンチプレス（kg）</th>
             <th>スクワット（kg）</th>
-            <th>操作</th>
         </tr>
     </thead>
     <tbody>
-        {% for m in measurements %}
         <tr>
             <td>{{ m.date }}</td>
-            <td>{{ m.player.username }}</td>
             <td>{{ m.sprint_50m }}</td>
             <td>{{ m.base_running }}</td>
             <td>{{ m.long_throw }}</td>
@@ -33,14 +28,12 @@
             <td>{{ m.swing_speed }}</td>
             <td>{{ m.bench_press }}</td>
             <td>{{ m.squat }}</td>
-            <td>
-                <a href="{% url 'approvals:coach_approve' m.id %}">詳細・承認</a>
-            </td>
         </tr>
-        {% endfor %}
     </tbody>
 </table>
-{% else %}
-<p>承認待ちの測定記録はありません。</p>
-{% endif %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">送信</button>
+</form>
 {% endblock %}
