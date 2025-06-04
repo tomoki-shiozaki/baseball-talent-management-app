@@ -25,7 +25,7 @@ class PendingApprovalListView(LoginRequiredMixin, ListView):
                 .exclude(
                     approvals__approver=user,
                     approvals__step="self",
-                    approvals__status="approved",
+                    approvals__status__in=["approved", "rejected"],
                 )
                 .select_related("player")
             )
@@ -61,7 +61,17 @@ class PlayerApprovalCreateView(LoginRequiredMixin, CreateView):
         form.instance.approver = self.request.user
         form.instance.role = "player"
         form.instance.step = "self"
-        return super().form_valid(form)
+
+        response = super().form_valid(form)
+
+        # Measurementのstatusを更新
+        if form.instance.status == "approved":
+            self.measurement.status = "player_approved"
+        elif form.instance.status == "rejected":
+            self.measurement.status = "rejected"
+        self.measurement.save()
+
+        return response
 
     def get_success_url(self):
         return reverse_lazy("home")

@@ -22,7 +22,7 @@ class HomePageView(TemplateView):
                     .exclude(
                         approvals__approver=user,
                         approvals__step="self",
-                        approvals__status="approved",
+                        approvals__status__in=["approved", "rejected"],
                     )
                     .count()
                 )
@@ -35,7 +35,10 @@ class HomePageView(TemplateView):
                     Measurement.objects.filter(
                         approvals__step="self", approvals__status="approved"
                     )
-                    .exclude(approvals__step="coach", approvals__status="approved")
+                    .exclude(
+                        approvals__step="coach",
+                        approvals__status__in=["approved", "rejected"],
+                    )
                     .count()
                 )
                 context["coach_pending_count"] = pending_count

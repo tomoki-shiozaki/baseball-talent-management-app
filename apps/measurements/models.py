@@ -5,10 +5,10 @@ from django.contrib.auth import get_user_model
 # Create your models here.
 class Measurement(models.Model):
     STATUS_CHOICES = [
-        ("draft", "下書き"),
         ("pending", "承認待ち"),
         ("player_approved", "部員承認済み"),
         ("coach_approved", "コーチ承認済み"),
+        ("rejected", "否認"),
     ]
 
     player = models.ForeignKey(
