@@ -38,7 +38,7 @@ class PendingApprovalListView(LoginRequiredMixin, ListView):
                 .exclude(
                     approvals__approver=user,
                     approvals__step="coach",
-                    approvals__status="approved",
+                    approvals__status__in=["approved", "rejected"],
                 )
                 .select_related("player")
             )
