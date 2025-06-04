@@ -22,7 +22,7 @@
         <p>未承認の記録: {{ pending_count }} 件</p>
         <a class="btn btn-outline-secondary btn-lg mx-3 my-2" href="{% url 'measurements:my_records' %}">自分の測定記録閲覧</a>
         {% if pending_count > 0 %}
-        <a class="btn btn-outline-success btn-lg mx-3 my-2" href="{% url 'approvals:pending' %}">
+        <a class="btn btn-outline-success btn-lg mx-3 my-2" href="{% url 'approvals:player_pending_approvals' %}">
             承認が必要な記録を見る
         </a>
         {% endif %}
@@ -31,7 +31,10 @@
         {% if user.is_coach %}
         <p>未承認の記録（コーチ承認待ち）: {{ coach_pending_count }} 件</p>
         {% if coach_pending_count > 0 %}
-        <a href="">承認待ちの記録を見る</a>
+        <a class="btn btn-outline-success btn-lg mx-3 my-2" href="{% url 'approvals:coach_pending_approvals'%}">
+            コーチの承認待ちの記録を見る
+        </a>
+
         {% endif %}
         {% endif %}
 

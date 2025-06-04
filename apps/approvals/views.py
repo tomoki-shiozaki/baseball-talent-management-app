@@ -11,7 +11,7 @@ from apps.measurements.models import Measurement
 
 
 # Create your views here.
-class PendingApprovalListView(LoginRequiredMixin, ListView):
+class PlayerPendingApprovalListView(LoginRequiredMixin, ListView):
     model = Measurement
     template_name = "approvals/pending_approval_list.html"
     context_object_name = "measurements"
@@ -19,32 +19,20 @@ class PendingApprovalListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
 
-        if user.is_player:
-            return (
-                Measurement.objects.filter(player=user)
-                .exclude(
-                    approvals__approver=user,
-                    approvals__step="self",
-                    approvals__status__in=["approved", "rejected"],
-                )
-                .select_related("player")
-            )
+        if not user.is_player:
+            return Measurement.objects.none()
 
-        elif user.is_coach:
-            return (
-                Measurement.objects.filter(
-                    approvals__step="self", approvals__status="approved"
-                )
-                .exclude(
-                    approvals__approver=user,
-                    approvals__step="coach",
-                    approvals__status__in=["approved", "rejected"],
-                )
-                .select_related("player")
+        # 承認履歴に「自分による承認（step=self）」が「済み（承認済または否認）」でないもの
+        return (
+            Measurement.objects.filter(player=user)
+            .exclude(
+                approvals__approver=user,
+                approvals__step="self",
+                approvals__status__in=["approved", "rejected"],
             )
-
-        else:
-            return Measurement.objects.none()  # マネージャー・監督などは対象外
+            .select_related("player")
+            .distinct()
+        )
 
 
 class PlayerApprovalCreateView(LoginRequiredMixin, CreateView):
@@ -80,3 +68,28 @@ class PlayerApprovalCreateView(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context["m"] = self.measurement
         return context
+
+
+class CoachPendingApprovalListView(LoginRequiredMixin, ListView):
+    model = Measurement
+    template_name = "approvals/coach_pending_approval_list.html"
+    context_object_name = "measurements"
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if not user.is_coach:
+            return Measurement.objects.none()
+
+        return (
+            Measurement.objects.filter(
+                approvals__step="self", approvals__status="approved"
+            )
+            .exclude(
+                approvals__approver=user,
+                approvals__step="coach",
+                approvals__status__in=["approved", "rejected"],
+            )
+            .select_related("player")
+            .distinct()
+        )
