@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load measurements_querystring %}
+
 {% block title %}測定結果{% endblock title %}
 
 {% block content %}
@@ -7,20 +9,17 @@
 
 <p>
     表示:
-    <a href="?status=approved&order={{ current_order }}"
+    <a href="{% query_update status='approved' %}"
         class="{% if current_status == 'approved' %}fw-bold{% endif %}">確定済み</a> |
-    <a href="?status=pending&order={{ current_order }}"
+    <a href="{% query_update status='pending' %}"
         class="{% if current_status == 'pending' %}fw-bold{% endif %}">承認待ち</a> |
-    <a href="?status=rejected&order={{ current_order }}"
+    <a href="{% query_update status='rejected' %}"
         class="{% if current_status == 'rejected' %}fw-bold{% endif %}">否認</a>
 </p>
 <p>
-    並び順：
-    {% if current_order == "asc" %}
-    古い順（<a href="?order=desc&status={{ current_status }}">新しい順に変更</a>）
-    {% elif current_order == "desc" %}
-    新しい順（<a href="?order=asc&status={{ current_status }}">古い順に変更</a>）
-    {% endif %}
+    並び順:
+    <a href="{% query_update order='desc' %}" class="{% if current_order == 'desc' %}fw-bold{% endif %}">新しい順</a> |
+    <a href="{% query_update order='asc' %}" class="{% if current_order == 'asc' %}fw-bold{% endif %}">古い順</a>
 </p>
 
 <table class="table table-striped">
