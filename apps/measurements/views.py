@@ -63,16 +63,32 @@ class MyMeasurementListView(LoginRequiredMixin, ListView):
     context_object_name = "measurements"
 
     def get_queryset(self):
+        user = self.request.user
+        status_filter = self.request.GET.get(
+            "status", "approved"
+        )  # デフォルトは確定済み
+        qs = Measurement.objects.filter(player=user)
+
+        if status_filter == "approved":
+            qs = qs.filter(status="coach_approved")
+        elif status_filter == "pending":
+            qs = qs.filter(status__in=["pending", "player_approved"])
+        elif status_filter == "rejected":
+            qs = qs.filter(status="rejected")
+        else:
+            qs = qs.none()
+
         # 指定がない場合は "desc"（新しい順）をデフォルトにする。
         order = self.request.GET.get("order", "desc")
         ordering = "-date" if order == "desc" else "date"
-        return Measurement.objects.filter(player=self.request.user).order_by(ordering)
+        return qs.order_by(ordering)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # ログインユーザーのユーザー名をコンテキストに追加
         context["player_name"] = self.request.user.username
         context["current_order"] = self.request.GET.get("order", "desc")
+        context["current_status"] = self.request.GET.get("status", "approved")
         return context
 
 
