@@ -5,6 +5,7 @@ from django.views.generic import ListView, DetailView
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
 
 from apps.approvals.models import MeasurementApproval
 from apps.measurements.models import Measurement
@@ -80,8 +81,13 @@ class MeasurementRecreateView(LoginRequiredMixin, UserPassesTestMixin, CreateVie
         # 作成者は現在のユーザー（マネージャー）で固定する
         form.instance.created_by = self.request.user
         form.instance.player = self.approval.measurement.player
-        # 承認待ちに戻す
         form.instance.status = "pending"
+
+        # 保存前に、古いレコードに再作成日時を記録
+        original = self.approval.measurement
+        original.recreated_at = timezone.now()
+        original.save(update_fields=["recreated_at"])
+
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):

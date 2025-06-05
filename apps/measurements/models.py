@@ -68,6 +68,12 @@ class Measurement(models.Model):
         default="draft",
         verbose_name="ステータス",
     )
+    recreated_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="再作成日時",
+        help_text="この記録が再作成された日時。再作成されていない場合は空。",
+    )
 
     def __str__(self):
         return f"{self.player.username} - {self.date}"

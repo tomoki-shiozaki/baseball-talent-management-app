@@ -19,6 +19,7 @@ class HomePageView(TemplateView):
                 rejected_count = Measurement.objects.filter(
                     created_by=user,
                     status="rejected",  # マネージャーが作成した記録に対して
+                    recreated_at__isnull=True,  # 再作成されていないものだけカウント
                 ).count()
                 context["rejected_count"] = rejected_count
 
