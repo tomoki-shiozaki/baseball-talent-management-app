@@ -116,10 +116,24 @@ class PlayerMeasurementListView(LoginRequiredMixin, UserPassesTestMixin, ListVie
 
     def get_queryset(self):
         player_id = self.kwargs.get("player_id")
+        status_filter = self.request.GET.get(
+            "status", "approved"
+        )  # デフォルトは確定済み
+        qs = Measurement.objects.filter(player_id=player_id)
+
+        if status_filter == "approved":
+            qs = qs.filter(status="coach_approved")
+        elif status_filter == "pending":
+            qs = qs.filter(status__in=["pending", "player_approved"])
+        elif status_filter == "rejected":
+            qs = qs.filter(status="rejected")
+        else:
+            qs = qs.none()
+
         # 指定がない場合は "desc"（新しい順）をデフォルトにする。
         order = self.request.GET.get("order", "desc")
         ordering = "-date" if order == "desc" else "date"
-        return Measurement.objects.filter(player_id=player_id).order_by(ordering)
+        return qs.order_by(ordering)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -127,4 +141,5 @@ class PlayerMeasurementListView(LoginRequiredMixin, UserPassesTestMixin, ListVie
         player = get_object_or_404(get_user_model(), id=player_id)
         context["player_name"] = player.username
         context["current_order"] = self.request.GET.get("order", "desc")
+        context["current_status"] = self.request.GET.get("status", "approved")
         return context
