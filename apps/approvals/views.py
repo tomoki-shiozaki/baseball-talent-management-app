@@ -22,10 +22,14 @@ class RejectedApprovalListView(LoginRequiredMixin, UserPassesTestMixin, ListView
         return self.request.user.is_manager
 
     def get_queryset(self):
-        # 否認(status='rejected')の承認履歴を最新順に取得
+        # 否認された承認記録のうち、まだ再作成されていないものを取得
         return (
-            MeasurementApproval.objects.filter(status="rejected")
-            .select_related("measurement", "approver")  # 外部キーをJOINして一括取得
+            MeasurementApproval.objects.filter(
+                measurement__created_by=self.request.user,
+                status="rejected",
+                measurement__recreated_at__isnull=True,  # 再作成されていない記録のみ
+            )
+            .select_related("measurement", "approver")
             .order_by("-created_at")
         )
 
