@@ -8,7 +8,12 @@
     <li class="list-group-item"><strong>ステップ:</strong> {{ approval.get_step_display }}</li>
     <li class="list-group-item"><strong>否認者:</strong> {{ approval.approver.username }}（{{ approval.role }}）</li>
     <li class="list-group-item"><strong>否認日:</strong> {{ approval.created_at|date:"Y年m月d日 H:i" }}</li>
-    <li class="list-group-item"><strong>コメント:</strong><br>{{ approval.comment|default:"(コメントなし)" }}</li>
+    <li class="list-group-item">
+        <strong>コメント:</strong>
+        <div class="alert alert-warning mt-2 mb-0 p-2" role="alert">
+            {{ approval.comment|default:"(コメントなし)" }}
+        </div>
+    </li>
 </ul>
 
 <table class="table table-striped">
@@ -40,7 +45,8 @@
     </tbody>
 </table>
 
-<a href="" class="btn btn-outline-secondary">
-    測定記録の詳細を見る
+<a href="{% url 'approvals:manager_rejected_measurement_recreate' approval.pk %}
+" class="btn btn-primary">
+    否認された測定記録を修正する
 </a>
 {% endblock %}

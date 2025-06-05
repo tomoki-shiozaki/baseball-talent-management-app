@@ -3,6 +3,7 @@ from django.urls import path
 from apps.approvals.views import (
     RejectedApprovalListView,
     RejectedApprovalDetailView,
+    MeasurementRecreateView,
     PlayerPendingApprovalListView,
     PlayerApprovalCreateView,
     CoachPendingApprovalListView,
@@ -22,6 +23,11 @@ urlpatterns = [
         "manager/rejected/<int:pk>/",
         RejectedApprovalDetailView.as_view(),
         name="manager_rejected_approval_detail",
+    ),
+    path(
+        "manager/rejected/<int:approval_pk>/recreate/",
+        MeasurementRecreateView.as_view(),
+        name="manager_rejected_measurement_recreate",
     ),
     # 部員用。自分の測定結果の承認
     path(

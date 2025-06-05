@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}測定記録結果の再作成 - JPT高校野球部{% endblock %}
+
+{% block content %}
+<h2>{{ approval.measurement.player.username }} さんの測定記録を登録</h2>
+
+<!-- 否認された測定記録の詳細 -->
+<div class="card mb-4">
+  <div class="card-header">否認された測定記録の詳細</div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item"><strong>部員名:</strong> {{ approval.measurement.player.username }}</li>
+    <li class="list-group-item"><strong>測定日:</strong> {{ approval.measurement.date }}</li>
+    <li class="list-group-item"><strong>ステップ:</strong> {{ approval.get_step_display }}</li>
+    <li class="list-group-item"><strong>否認者:</strong> {{ approval.approver.username }}（{{ approval.role }}）</li>
+    <li class="list-group-item"><strong>否認日:</strong> {{ approval.created_at|date:"Y年m月d日 H:i" }}</li>
+    <li class="list-group-item">
+      <strong>コメント:</strong>
+      <div class="alert alert-warning mt-2 mb-0 p-2" role="alert">
+        {{ approval.comment|default:"(コメントなし)" }}
+      </div>
+    </li>
+  </ul>
+
+  <table class="table table-striped mt-3 mb-0">
+    <thead>
+      <tr>
+        <th>測定日</th>
+        <th>50m走（秒）</th>
+        <th>ベースランニング（秒）</th>
+        <th>遠投（m）</th>
+        <th>ストレート球速（km/h）</th>
+        <th>打球速度（km/h）</th>
+        <th>スイング速度（km/h）</th>
+        <th>ベンチプレス（kg）</th>
+        <th>スクワット（kg）</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ approval.measurement.date }}</td>
+        <td>{{ approval.measurement.sprint_50m }}</td>
+        <td>{{ approval.measurement.base_running }}</td>
+        <td>{{ approval.measurement.long_throw }}</td>
+        <td>{{ approval.measurement.straight_ball_speed }}</td>
+        <td>{{ approval.measurement.hit_ball_speed }}</td>
+        <td>{{ approval.measurement.swing_speed }}</td>
+        <td>{{ approval.measurement.bench_press }}</td>
+        <td>{{ approval.measurement.squat }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 再作成フォーム -->
+<form method="post">
+  {% csrf_token %}
+  {{ form|crispy }}
+  <button class="btn btn-primary" type="submit">保存</button>
+</form>
+{% endblock content %}

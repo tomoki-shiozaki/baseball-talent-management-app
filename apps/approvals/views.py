@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.views.generic.edit import DeleteView, CreateView
 from django.views.generic import ListView, DetailView
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 
 from apps.approvals.models import MeasurementApproval
@@ -37,6 +37,61 @@ class RejectedApprovalDetailView(LoginRequiredMixin, UserPassesTestMixin, Detail
     def test_func(self):
         # マネージャーのみ
         return self.request.user.is_authenticated and self.request.user.is_manager
+
+
+class MeasurementRecreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Measurement
+    template_name = "approvals/manager_measurement_form.html"
+    fields = (
+        "date",
+        "sprint_50m",
+        "base_running",
+        "long_throw",
+        "straight_ball_speed",
+        "hit_ball_speed",
+        "swing_speed",
+        "bench_press",
+        "squat",
+    )
+
+    def test_func(self):
+        return self.request.user.is_manager
+
+    def dispatch(self, request, *args, **kwargs):
+        self.approval = get_object_or_404(MeasurementApproval, pk=kwargs["approval_pk"])
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_initial(self):
+        original = self.approval.measurement
+        initial = {
+            "date": original.date,
+            "sprint_50m": original.sprint_50m,
+            "base_running": original.base_running,
+            "long_throw": original.long_throw,
+            "straight_ball_speed": original.straight_ball_speed,
+            "hit_ball_speed": original.hit_ball_speed,
+            "swing_speed": original.swing_speed,
+            "bench_press": original.bench_press,
+            "squat": original.squat,
+        }
+        return initial
+
+    def form_valid(self, form):
+        # 作成者は現在のユーザー（マネージャー）で固定する
+        form.instance.created_by = self.request.user
+        form.instance.player = self.approval.measurement.player
+        # 承認待ちに戻す
+        form.instance.status = "pending"
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # approvalオブジェクトをテンプレートに渡す
+        context["approval"] = self.approval
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy("home")
 
 
 class PlayerPendingApprovalListView(LoginRequiredMixin, ListView):
