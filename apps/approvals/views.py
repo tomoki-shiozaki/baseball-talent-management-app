@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.views.generic.edit import DeleteView, CreateView
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -13,7 +13,7 @@ from apps.measurements.models import Measurement
 # Create your views here.
 class RejectedApprovalListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = MeasurementApproval
-    template_name = "approvals/rejected_approval_list.html"
+    template_name = "approvals/manager_rejected_approval_list.html"
     context_object_name = "approvals"
 
     def test_func(self):
@@ -29,9 +29,19 @@ class RejectedApprovalListView(LoginRequiredMixin, UserPassesTestMixin, ListView
         )
 
 
+class RejectedApprovalDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    model = MeasurementApproval
+    template_name = "approvals/manager_rejected_approval_detail.html"
+    context_object_name = "approval"
+
+    def test_func(self):
+        # マネージャーのみ
+        return self.request.user.is_authenticated and self.request.user.is_manager
+
+
 class PlayerPendingApprovalListView(LoginRequiredMixin, ListView):
     model = Measurement
-    template_name = "approvals/pending_approval_list.html"
+    template_name = "approvals/player_pending_approval_list.html"
     context_object_name = "measurements"
 
     def get_queryset(self):
