@@ -1,6 +1,7 @@
 from django.urls import path
 
 from apps.approvals.views import (
+    RejectedApprovalListView,
     PlayerPendingApprovalListView,
     PlayerApprovalCreateView,
     CoachPendingApprovalListView,
@@ -10,6 +11,12 @@ from apps.approvals.views import (
 app_name = "approvals"
 
 urlpatterns = [
+    # マネージャー用。否認された承認記録を扱う。
+    path(
+        "manager/rejected/",
+        RejectedApprovalListView.as_view(),
+        name="manager_rejected_approval_list",
+    ),
     # 部員用。自分の測定結果の承認
     path(
         "player/pending/",

@@ -16,9 +16,15 @@
         <p class="lead">
             {% if user.is_manager %}
             <a class="btn btn-primary btn-lg mx-3 my-2" href="{% url 'measurements:player_list' %}">測定結果入力</a>
-            {% endif %}
+            {% if rejected_count > 0 %}
+        <div class="alert alert-danger mt-4 mx-auto" style="max-width: 600px;">
+            <strong>⚠ 否認された記録があります（{{ rejected_count }}件）</strong><br>
+            <a href="{% url 'approvals:manager_rejected_approval_list' %}" class="alert-link">詳細を見る</a>
+        </div>
+        {% endif %}
+        {% endif %}
 
-            {% if user.is_player %}
+        {% if user.is_player %}
         <p>未承認の記録: {{ pending_count }} 件</p>
         <a class="btn btn-outline-secondary btn-lg mx-3 my-2" href="{% url 'measurements:my_records' %}">自分の測定記録閲覧</a>
         {% if pending_count > 0 %}

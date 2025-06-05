@@ -15,8 +15,15 @@ class HomePageView(TemplateView):
         user = self.request.user
 
         if user.is_authenticated:
+            if user.is_manager:
+                rejected_count = Measurement.objects.filter(
+                    created_by=user,
+                    status="rejected",  # マネージャーが作成した記録に対して
+                ).count()
+                context["rejected_count"] = rejected_count
+
             # 部員の未承認記録の数をホーム画面に通知する
-            if user.is_player:
+            elif user.is_player:
                 pending_count = (
                     Measurement.objects.filter(player=user)
                     .exclude(

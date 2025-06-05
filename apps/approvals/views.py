@@ -11,6 +11,24 @@ from apps.measurements.models import Measurement
 
 
 # Create your views here.
+class RejectedApprovalListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = MeasurementApproval
+    template_name = "approvals/rejected_approval_list.html"
+    context_object_name = "approvals"
+
+    def test_func(self):
+        # マネージャー権限のみ閲覧可能にする
+        return self.request.user.is_manager
+
+    def get_queryset(self):
+        # 否認(status='rejected')の承認履歴を最新順に取得
+        return (
+            MeasurementApproval.objects.filter(status="rejected")
+            .select_related("measurement", "approver")  # 外部キーをJOINして一括取得
+            .order_by("-created_at")
+        )
+
+
 class PlayerPendingApprovalListView(LoginRequiredMixin, ListView):
     model = Measurement
     template_name = "approvals/pending_approval_list.html"
