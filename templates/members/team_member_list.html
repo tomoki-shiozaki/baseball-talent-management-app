@@ -26,7 +26,11 @@
         <tbody>
             {% for user in object_list %}
             <tr>
-                <td>{{ user.get_full_name|default:user.username }}</td>
+                <td>{% if user.get_full_name %}
+                    {{ user.get_full_name }}
+                    {% else %}
+                    {{ user.username }}
+                    {% endif %}</td>
                 <td>{{ user.email }}</td>
                 <td>
                     {% if user.role == "player" %}部員

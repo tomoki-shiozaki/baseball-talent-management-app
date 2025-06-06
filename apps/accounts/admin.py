@@ -23,8 +23,23 @@ class CustomUserAdmin(UserAdmin):
         ("追加情報", {"fields": ("role", "status", "grade")}),
     )
 
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        ("カスタムフィールド", {"fields": ("role",)}),
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "username",
+                    "email",
+                    "first_name",
+                    "last_name",
+                    "role",
+                    "grade",
+                    "password1",
+                    "password2",
+                ),
+            },
+        ),
     )
     list_filter = ("role", "status", "grade")
 
