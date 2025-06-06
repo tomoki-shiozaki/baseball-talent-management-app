@@ -1,6 +1,9 @@
 {% extends "base.html" %}
+
+{% load user_extras %}
+
 {% block content %}
-<h2>{{ user.username }} さんの承認待ちの測定記録</h2>
+<h2>{{ user|display_name }} さんの承認待ちの測定記録</h2>
 
 {% if measurements %}
 <table class="table table-striped">

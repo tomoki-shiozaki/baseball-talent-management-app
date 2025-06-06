@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% load user_extras %}
+
 {% block title %}コーチ承認待ち{% endblock %}
 {% block content %}
 <h2>コーチとして承認が必要な測定記録</h2>
@@ -24,7 +27,7 @@
         {% for m in measurements %}
         <tr>
             <td>{{ m.date }}</td>
-            <td>{{ m.player.username }}</td>
+            <td>{{ m.player|display_name }}</td>
             <td>{{ m.sprint_50m }}</td>
             <td>{{ m.base_running }}</td>
             <td>{{ m.long_throw }}</td>

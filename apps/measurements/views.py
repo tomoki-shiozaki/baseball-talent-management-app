@@ -85,8 +85,10 @@ class MyMeasurementListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # ログインユーザーのユーザー名をコンテキストに追加
-        context["player_name"] = self.request.user.username
+        user = self.request.user
+        full_name = user.get_full_name()
+        # ログインユーザーの姓名をコンテキストに追加
+        context["player_name"] = full_name if full_name else user.username
         context["current_order"] = self.request.GET.get("order", "desc")
         context["current_status"] = self.request.GET.get("status", "approved")
         return context
@@ -139,7 +141,9 @@ class PlayerMeasurementListView(LoginRequiredMixin, UserPassesTestMixin, ListVie
         context = super().get_context_data(**kwargs)
         player_id = self.kwargs.get("player_id")
         player = get_object_or_404(get_user_model(), id=player_id)
-        context["player_name"] = player.username
+        full_name = player.get_full_name()
+        # ログインユーザーのユーザー名をコンテキストに追加
+        context["player_name"] = full_name if full_name else player.username
         context["current_order"] = self.request.GET.get("order", "desc")
         context["current_status"] = self.request.GET.get("status", "approved")
         return context

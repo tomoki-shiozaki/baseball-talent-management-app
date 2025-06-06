@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load user_extras %}
+
 {% block title %}ホーム{% endblock title %}
 {% block content %}
 
@@ -12,7 +14,7 @@
     {% if user.is_authenticated %}
     <!-- ログイン後のトップ画面 -->
     <div class="text-center">
-        <p class="h3 mb-4 fw-bold">{{ user.username }} さん、ようこそ！</p>
+        <p class="h3 mb-4 fw-bold">{{ user|display_name }} さん、ようこそ！</p>
         <p class="lead">
             {% if user.is_manager %}
             <a class="btn btn-primary btn-lg mx-3 my-2" href="{% url 'measurements:player_list' %}">測定結果入力</a>

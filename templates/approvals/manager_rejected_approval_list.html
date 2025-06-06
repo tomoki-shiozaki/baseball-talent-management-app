@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% load user_extras %}
+
 {% block title %}否認された測定記録{% endblock %}
 {% block content %}
 <h2>否認された記録一覧</h2>
@@ -17,8 +20,8 @@
     <tbody>
         {% for approval in approvals %}
         <tr>
-            <td>{{ approval.measurement.player.username }}</td>
-            <td>{{ approval.approver.username }}</td>
+            <td>{{ approval.measurement.player|display_name }}</td>
+            <td>{{ approval.approver|display_name }}</td>
             <td>{{ approval.get_step_display }}</td>
             <td>{{ approval.created_at|date:"Y年m月d日 H:i" }}</td>
             <td>{{ approval.comment|truncatechars:50|default:"(コメントなし)" }}</td>

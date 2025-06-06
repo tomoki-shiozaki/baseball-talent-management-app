@@ -1,6 +1,9 @@
 {% extends "base.html" %}
+
+{% load user_extras %}
+
 {% block content %}
-<h2>{{ user.username }} さんの測定記録の承認</h2>
+<h2>{{ user|display_name }} さんの測定記録の承認</h2>
 
 <table class="table table-striped">
     <thead>
