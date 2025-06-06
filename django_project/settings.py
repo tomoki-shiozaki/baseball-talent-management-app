@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "apps.measurements.apps.MeasurementsConfig",
     "apps.members.apps.MembersConfig",
     "apps.approvals.apps.ApprovalsConfig",
+    "apps.common.apps.CommonConfig",
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

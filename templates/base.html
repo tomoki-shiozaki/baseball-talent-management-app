@@ -1,4 +1,5 @@
 {% load static %}
+{% load user_extras %}
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -36,7 +37,7 @@
                             <li class="nav-item">
                                 <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-bs-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false">
-                                    {{ user.username }}
+                                    {{ user|display_name }}
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
                                     <a class="dropdown-item" href="{% url 'password_change'%}">パスワード変更</a>
