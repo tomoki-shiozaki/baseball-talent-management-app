@@ -15,6 +15,7 @@ User = get_user_model()
 class TeamMemberListView(LoginRequiredMixin, ListView):
     model = User
     template_name = "members/team_member_list.html"
+    paginate_by = 10
 
     def get_queryset(self):
         return User.objects.filter(role__in=["player", "manager"])

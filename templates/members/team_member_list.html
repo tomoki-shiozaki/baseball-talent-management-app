@@ -52,4 +52,83 @@
 <p>登録された部員・マネージャーがいません。</p>
 {% endif %}
 
+{% if is_paginated %}
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+
+        <!-- 最初のページへ -->
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1&status={{ current_status }}&order={{ current_order }}"
+                aria-label="First">
+                <span aria-hidden="true">⏮</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">⏮</span>
+        </li>
+        {% endif %}
+
+        <!-- 前のページへ -->
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link"
+                href="?page={{ page_obj.previous_page_number }}&status={{ current_status }}&order={{ current_order }}"
+                aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">&laquo;</span>
+        </li>
+        {% endif %}
+
+        <!-- 中央ページ番号ループ -->
+        {% for num in paginator.page_range %}
+        {% if num == page_obj.number %}
+        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link"
+                href="?page={{ num }}&status={{ current_status }}&order={{ current_order }}">{{num}}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        <!-- 次のページへ -->
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link"
+                href="?page={{ page_obj.next_page_number }}&status={{ current_status }}&order={{ current_order }}"
+                aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">&raquo;</span>
+        </li>
+        {% endif %}
+
+        <!-- 最後のページへ -->
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link"
+                href="?page={{ paginator.num_pages }}&status={{ current_status }}&order={{ current_order }}"
+                aria-label="Last">
+                <span aria-hidden="true">⏭</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">⏭</span>
+        </li>
+        {% endif %}
+
+    </ul>
+</nav>
+{% endif %}
+
 {% endblock content %}
