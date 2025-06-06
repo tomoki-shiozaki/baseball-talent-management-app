@@ -1,3 +1,5 @@
+from django import forms
+
 from apps.accounts.forms import CustomUserCreationForm
 from apps.accounts.models import CustomUser
 
@@ -22,3 +24,7 @@ class TeamMemberCreateForm(CustomUserCreationForm):
             for key, label in CustomUser.ROLE_CHOICES
             if key in allowed_roles
         ]
+
+
+class TeamMemberRetireForm(forms.Form):
+    confirm = forms.BooleanField(label="退部することを確認します", required=True)

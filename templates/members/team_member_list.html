@@ -23,6 +23,7 @@
                 <th>ロール</th>
                 <th>学年</th>
                 <th>在籍状態</th>
+                <th>操作</th>
             </tr>
         </thead>
         <tbody>
@@ -41,6 +42,14 @@
                     {% if user.status == "active" %}在籍中
                     {% elif user.status == "retired" %}退部
                     {% else %}{{ user.status }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.status == "active" %}
+                    <a href="{% url 'members:team_member_retire' user.pk %}"
+                        class="btn btn-sm btn-outline-danger">退部</a>
+                    {% else %}
+                    <span class="text-muted">退部済</span>
                     {% endif %}
                 </td>
             </tr>
