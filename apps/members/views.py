@@ -38,7 +38,7 @@ class TeamMemberRetireView(LoginRequiredMixin, UserPassesTestMixin, FormView):
         return super().dispatch(request, *args, **kwargs)
 
     def test_func(self):
-        return self.request.user.is_coach or self.request.user.director
+        return self.request.user.is_coach or self.request.user.is_director
 
     def form_valid(self, form):
         # 退部処理
