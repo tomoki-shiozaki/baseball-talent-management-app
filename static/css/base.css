@@ -11,17 +11,27 @@ body {
     margin: 0;
 }
 
-#site-name {
-    color: #ffffff;
-    font-size: 2rem;
-    /* 下線を消す */
-    text-decoration: none;
-    transition: color 0.2s ease;
+:root {
+    --site-name-color: #ffffff;
+    --site-name-hover-color: #ffeb3b;
+    --site-name-font-size: 2rem;
+    --transition-speed: 0.2s;
 }
 
-#site-name:hover {
-    color: #ffeb3b;
-    font-weight: bold;
+#site-name {
+    color: var(--site-name-color);
+    font-size: var(--site-name-font-size);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color var(--transition-speed) ease, font-weight var(--transition-speed) ease;
+    display: inline-block; /* モバイルやボタン風に調整可能 */
+}
+
+#site-name:hover,
+#site-name:focus {
+    color: var(--site-name-hover-color);
+    font-weight: 700;
+    outline: none;
 }
 
 .wrapper {
