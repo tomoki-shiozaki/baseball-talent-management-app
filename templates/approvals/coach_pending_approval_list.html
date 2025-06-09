@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% load user_extras %}
+
+{% block title %}コーチ承認待ち{% endblock %}
+{% block content %}
+<h2>コーチとして承認が必要な測定記録</h2>
+
+{% if measurements %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>測定日</th>
+            <th>部員</th>
+            <th>50m走（秒）</th>
+            <th>ベースランニング（秒）</th>
+            <th>遠投（m）</th>
+            <th>ストレート球速（km/h）</th>
+            <th>打球速度（km/h）</th>
+            <th>スイング速度（km/h）</th>
+            <th>ベンチプレス（kg）</th>
+            <th>スクワット（kg）</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for m in measurements %}
+        <tr>
+            <td>{{ m.date }}</td>
+            <td>{{ m.player|display_name }}</td>
+            <td>{{ m.sprint_50m }}</td>
+            <td>{{ m.base_running }}</td>
+            <td>{{ m.long_throw }}</td>
+            <td>{{ m.straight_ball_speed }}</td>
+            <td>{{ m.hit_ball_speed }}</td>
+            <td>{{ m.swing_speed }}</td>
+            <td>{{ m.bench_press }}</td>
+            <td>{{ m.squat }}</td>
+            <td>
+                <a href="{% url 'approvals:coach_approve' m.id %}">詳細・承認</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>承認待ちの測定記録はありません。</p>
+{% endif %}
+{% endblock %}

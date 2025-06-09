@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% load user_extras %}
+
+{% block title %}部員・マネージャー一覧{% endblock title %}
+
+{% block content %}
+<h2 class="my-4">部員・マネージャー一覧</h2>
+
+<!-- 新規登録ボタン -->
+<div class="mt-3">
+    <a href="{% url 'members:team_member_new' %}" class="btn btn-primary mb-3">新規部員・マネージャー登録</a>
+</div>
+
+<!-- 部員リストテーブル -->
+{% if object_list %}
+<div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>名前</th>
+                <th>メールアドレス</th>
+                <th>ロール</th>
+                <th>学年</th>
+                <th>在籍状態</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in object_list %}
+            <tr>
+                <td>{{ user|display_name }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {% if user.role == "player" %}部員
+                    {% elif user.role == "manager" %}マネージャー
+                    {% else %}{{ user.role }}
+                    {% endif %}
+                </td>
+                <td>{{ user.grade|default:"-" }}</td>
+                <td>
+                    {% if user.status == "active" %}在籍中
+                    {% elif user.status == "retired" %}退部
+                    {% else %}{{ user.status }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.status == "active" %}
+                    <a href="{% url 'members:team_member_retire' user.pk %}"
+                        class="btn btn-sm btn-outline-danger">退部</a>
+                    {% else %}
+                    <span class="text-muted">退部済</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p>登録された部員・マネージャーがいません。</p>
+{% endif %}
+
+{% if is_paginated %}
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+
+        <!-- 最初のページへ -->
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1&status={{ current_status }}&order={{ current_order }}"
+                aria-label="First">
+                <span aria-hidden="true">⏮</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">⏮</span>
+        </li>
+        {% endif %}
+
+        <!-- 前のページへ -->
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link"
+                href="?page={{ page_obj.previous_page_number }}&status={{ current_status }}&order={{ current_order }}"
+                aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">&laquo;</span>
+        </li>
+        {% endif %}
+
+        <!-- 中央ページ番号ループ -->
+        {% for num in paginator.page_range %}
+        {% if num == page_obj.number %}
+        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link"
+                href="?page={{ num }}&status={{ current_status }}&order={{ current_order }}">{{num}}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        <!-- 次のページへ -->
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link"
+                href="?page={{ page_obj.next_page_number }}&status={{ current_status }}&order={{ current_order }}"
+                aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">&raquo;</span>
+        </li>
+        {% endif %}
+
+        <!-- 最後のページへ -->
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link"
+                href="?page={{ paginator.num_pages }}&status={{ current_status }}&order={{ current_order }}"
+                aria-label="Last">
+                <span aria-hidden="true">⏭</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">⏭</span>
+        </li>
+        {% endif %}
+
+    </ul>
+</nav>
+{% endif %}
+
+{% endblock content %}

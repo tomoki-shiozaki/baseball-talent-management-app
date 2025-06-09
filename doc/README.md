@@ -4,4 +4,6 @@
 
 ### ER図
 
+以下は本アプリケーションのER図です。
+
 ![ER図](ER/ER_diagram/ER.svg)

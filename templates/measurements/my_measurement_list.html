@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% load measurements_querystring %}
+
+{% block title %}測定結果{% endblock title %}
+
+{% block content %}
+<h2>{{ player_name }} さんの測定記録一覧</h2>
+
+<p>
+    表示:
+    <a href="{% query_update status='approved' %}"
+        class="{% if current_status == 'approved' %}fw-bold{% endif %}">確定済み</a> |
+    <a href="{% query_update status='pending' %}"
+        class="{% if current_status == 'pending' %}fw-bold{% endif %}">承認待ち</a> |
+    <a href="{% query_update status='rejected' %}"
+        class="{% if current_status == 'rejected' %}fw-bold{% endif %}">否認</a>
+</p>
+<p>
+    並び順:
+    <a href="{% query_update order='desc' %}" class="{% if current_order == 'desc' %}fw-bold{% endif %}">新しい順</a> |
+    <a href="{% query_update order='asc' %}" class="{% if current_order == 'asc' %}fw-bold{% endif %}">古い順</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>測定日</th>
+            <th>50m走（秒）</th>
+            <th>ベースランニング（秒）</th>
+            <th>遠投（m）</th>
+            <th>ストレート球速（km/h）</th>
+            <th>打球速度（km/h）</th>
+            <th>スイング速度（km/h）</th>
+            <th>ベンチプレス（kg）</th>
+            <th>スクワット（kg）</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for m in measurements %}
+        <tr>
+            <td>{{ m.date }}</td>
+            <td>{{ m.sprint_50m }}</td>
+            <td>{{ m.base_running }}</td>
+            <td>{{ m.long_throw }}</td>
+            <td>{{ m.straight_ball_speed }}</td>
+            <td>{{ m.hit_ball_speed }}</td>
+            <td>{{ m.swing_speed }}</td>
+            <td>{{ m.bench_press }}</td>
+            <td>{{ m.squat }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="9">記録がありません</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock content %}

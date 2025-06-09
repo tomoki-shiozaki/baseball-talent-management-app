@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% load user_extras %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<h2>{{ player|display_name }} さんの測定記録を登録</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button class="btn btn-primary" type="submit">保存</button>
+  </form>
+{% endblock content %}

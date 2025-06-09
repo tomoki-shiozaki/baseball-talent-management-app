@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% load user_extras %}
+
+{% block content %}
+<h2>{{ user|display_name }} さんの測定記録の承認</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>測定日</th>
+            <th>50m走（秒）</th>
+            <th>ベースランニング（秒）</th>
+            <th>遠投（m）</th>
+            <th>ストレート球速（km/h）</th>
+            <th>打球速度（km/h）</th>
+            <th>スイング速度（km/h）</th>
+            <th>ベンチプレス（kg）</th>
+            <th>スクワット（kg）</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ m.date }}</td>
+            <td>{{ m.sprint_50m }}</td>
+            <td>{{ m.base_running }}</td>
+            <td>{{ m.long_throw }}</td>
+            <td>{{ m.straight_ball_speed }}</td>
+            <td>{{ m.hit_ball_speed }}</td>
+            <td>{{ m.swing_speed }}</td>
+            <td>{{ m.bench_press }}</td>
+            <td>{{ m.squat }}</td>
+        </tr>
+    </tbody>
+</table>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">送信</button>
+</form>
+{% endblock %}

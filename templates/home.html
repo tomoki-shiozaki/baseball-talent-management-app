@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% load user_extras %}
+
+{% block title %}ホーム{% endblock title %}
+{% block content %}
+
+<div class="container bg-light p-5 rounded-lg shadow-lg my-5">
+    <div class="text-center mb-4">
+        <h1 class="display-3 mb-3 fw-bold"> 神奈川県立JPT高校野球部<br>タレントマネジメントシステム</h1>
+        <p class="lead mb-4">野球部員の「タレントマネジメント」を行うアプリです。</p>
+    </div>
+
+    {% if user.is_authenticated %}
+    <!-- ログイン後のトップ画面 -->
+    <div class="text-center">
+        <p class="h3 mb-4 fw-bold">{{ user|display_name }} さん、ようこそ！</p>
+        <p class="lead">
+            {% if user.is_manager %}
+            <a class="btn btn-primary btn-lg mx-3 my-2" href="{% url 'measurements:player_list' %}">測定結果入力</a>
+            {% if rejected_count > 0 %}
+        <div class="alert alert-danger mt-4 mx-auto" style="max-width: 600px;">
+            <strong>⚠ 否認された記録があります（{{ rejected_count }}件）</strong><br>
+            <a href="{% url 'approvals:manager_rejected_approval_list' %}" class="alert-link">詳細を見る</a>
+        </div>
+        {% endif %}
+        {% endif %}
+
+        {% if user.is_player %}
+        <p>未承認の記録: {{ pending_count }} 件</p>
+        <a class="btn btn-outline-secondary btn-lg mx-3 my-2" href="{% url 'measurements:my_records' %}">自分の測定記録閲覧</a>
+        {% if pending_count > 0 %}
+        <a class="btn btn-outline-success btn-lg mx-3 my-2" href="{% url 'approvals:player_pending_approvals' %}">
+            承認が必要な記録を見る
+        </a>
+        {% endif %}
+        {% endif %}
+
+        {% if user.is_coach %}
+        <p>未承認の記録（コーチ承認待ち）: {{ coach_pending_count }} 件</p>
+        {% if coach_pending_count > 0 %}
+        <a class="btn btn-outline-success btn-lg mx-3 my-2" href="{% url 'approvals:coach_pending_approvals'%}">
+            コーチの承認待ちの記録を見る
+        </a>
+
+        {% endif %}
+        {% endif %}
+
+        {% if user.is_coach or user.is_director %}
+        <a class="btn btn-outline-secondary btn-lg mx-3 my-2" href="{% url 'measurements:member_list' %}">部員別測定記録閲覧</a>
+        <a class="btn btn-warning btn-lg mx-3 my-2" href="{% url 'members:team_member_list' %}">部員管理</a>
+        {% endif %}
+        </p>
+    </div>
+    {% else %}
+    <!-- ログイン前のトップ画面 -->
+    <div class="text-center">
+        <h2 class="h4 mb-4 fw-bold">アカウントをお持ちの方はこちらからログイン</h2>
+        <p class="text-muted">※アカウントは監督またはコーチから配布されます。</p>
+        <div class="lead mb-4">
+            <a href="{% url 'login' %}" class="btn btn-dark btn-lg px-5 py-2 my-2">ログイン</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+
+{% endblock content %}
