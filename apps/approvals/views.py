@@ -41,7 +41,7 @@ class RejectedApprovalDetailView(LoginRequiredMixin, UserPassesTestMixin, Detail
 
     def test_func(self):
         # マネージャーのみ
-        return self.request.user.is_authenticated and self.request.user.is_manager
+        return self.request.user.is_manager
 
 
 class MeasurementRecreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
