@@ -11,7 +11,7 @@ entity "ユーザーマスター" as User {
 }
 
 entity "測定記録" as Measurement {
-  +測定記録結果ID <<PK>>
+  +測定記録ID <<PK>>
   +ユーザーID <<FK>> -- 測定対象者（部員）
   +作成者ID <<FK>> -- 測定記録を登録したマネージャー
   +測定日
@@ -29,22 +29,19 @@ entity "測定記録" as Measurement {
 
 entity "承認履歴" as MeasurementApproval {
   +承認履歴ID <<PK>>
-  +ユーザーID <<FK>> -- 測定対象者（部員）
-  +作成者ID <<FK>> -- 測定記録を登録したマネージャー
-  +測定日
-  +50m走（秒）
-  +ベースランニング（秒）
-  +遠投（m）
-  +ストレート球速（km/h）
-  +打球速度（km/h）
-  +スイング速度（km/h）
-  +ベンチプレス（kg）
-  +スクワット（kg）
-  +ステータス <<承認待ち/部員承認済み/コーチ承認済み/否認>>
-  +再作成日時
+  +測定記録ID <<FK>> 
+  +承認者ID <<FK>> -- 測定記録を承認・否認するユーザー（部員およびコーチ）
+  +承認者のロール <<部員/コーチ>>
+  +承認ステップ <<部員による承認/コーチの最終承認>>
+  +承認日時
+  +承認ステータス <<承認/否認>>
+  +コメント
 }
 
 User ||--o{ Measurement : 対象者（ユーザーID）
 User ||--o{ Measurement : 作成者（ユーザーID）
+
+Measurement ||--|{ MeasurementApproval : 測定記録ID
+User ||--|{ MeasurementApproval : 承認者（ユーザーID）
 
 @enduml

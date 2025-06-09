@@ -26,14 +26,33 @@ class MeasurementApproval(models.Model):
     approver = models.ForeignKey(
         get_user_model(),
         on_delete=models.CASCADE,
-        verbose_name="判断者",
+        verbose_name="承認者",
     )
     # 承認した人のロール
-    role = models.CharField(max_length=10, choices=get_user_model().ROLE_CHOICES)
-    step = models.CharField(max_length=10, choices=STEP_CHOICES)
-    created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
-    comment = models.TextField(blank=True, null=True)
+    role = models.CharField(
+        max_length=10,
+        choices=get_user_model().ROLE_CHOICES,
+        verbose_name="承認者の立場",
+    )
+    step = models.CharField(
+        max_length=10,
+        choices=STEP_CHOICES,
+        verbose_name="承認ステップ",
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="承認日時",
+    )
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        verbose_name="承認ステータス",
+    )
+    comment = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="コメント",
+    )
 
     def __str__(self):
         return f"{self.measurement} by {self.approver.username} ({self.get_step_display()})"
