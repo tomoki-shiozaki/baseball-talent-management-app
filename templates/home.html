@@ -55,10 +55,10 @@
     {% else %}
     <!-- ログイン前のトップ画面 -->
     <div class="text-center">
-        <h2 class="h4 mb-4 fw-bold">ログインしてください</h2>
+        <h2 class="h4 mb-4 fw-bold">アカウントをお持ちの方はこちらからログイン</h2>
+        <p class="text-muted">※アカウントは監督またはコーチから配布されます。</p>
         <div class="lead mb-4">
-            <a href="{% url 'login' %}" class="btn btn-outline-dark btn-lg mx-3 my-2">ログイン</a>
-            <a href="{% url 'signup' %}" class="btn btn-dark btn-lg mx-3 my-2">新規登録</a>
+            <a href="{% url 'login' %}" class="btn btn-dark btn-lg px-5 py-2 my-2">ログイン</a>
         </div>
     </div>
     {% endif %}

@@ -96,34 +96,6 @@ class CustomUserAdminTest(TestCase):
         self.assertEqual(user.role, LIBRARIAN)
 
 
-class SignupPageTests(TestCase):
-    username = "newuser"
-    email = "newuser@email.com"
-    role = GENERAL
-
-    def test_signup_page_status_code(self):
-        response = self.client.get("/accounts/signup/")
-        self.assertEqual(response.status_code, 200)
-
-    def test_view_url_by_name(self):
-        response = self.client.get(reverse("signup"))
-        self.assertEqual(response.status_code, 200)
-
-    def test_view_uses_correct_template(self):
-        response = self.client.get(reverse("signup"))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "signup.html")
-
-    def test_signup_form(self):
-        new_user = get_user_model().objects.create_user(
-            self.username, self.email, self.role
-        )
-        self.assertEqual(get_user_model().objects.all().count(), 1)
-        self.assertEqual(get_user_model().objects.all()[0].username, self.username)
-        self.assertEqual(get_user_model().objects.all()[0].email, self.email)
-        self.assertEqual(get_user_model().objects.all()[0].role, self.role)
-
-
 class CustomUserModelTest(TestCase):
     def test_default_role_is_general(self):
         user = get_user_model().objects.create_user(
