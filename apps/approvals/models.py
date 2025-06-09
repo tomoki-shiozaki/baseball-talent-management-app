@@ -17,10 +17,17 @@ class MeasurementApproval(models.Model):
     ]
 
     measurement = models.ForeignKey(
-        Measurement, on_delete=models.CASCADE, related_name="approvals"
+        Measurement,
+        on_delete=models.CASCADE,
+        related_name="approvals",
+        verbose_name="測定記録",
     )
     # 誰がその承認をしたか
-    approver = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    approver = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        verbose_name="判断者",
+    )
     # 承認した人のロール
     role = models.CharField(max_length=10, choices=get_user_model().ROLE_CHOICES)
     step = models.CharField(max_length=10, choices=STEP_CHOICES)

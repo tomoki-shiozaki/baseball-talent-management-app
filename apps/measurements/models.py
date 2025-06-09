@@ -31,35 +31,35 @@ class Measurement(models.Model):
 
     sprint_50m = models.FloatField(
         verbose_name="50m走（秒）",
-        help_text="50m走のタイム（秒）を入力してください",
+        help_text="50m走のタイム（秒）を小数で入力してください。例: 6.25",
     )
     base_running = models.FloatField(
         verbose_name="ベースランニング（秒）",
-        help_text="ベースランニングのタイム（秒）を入力してください",
+        help_text="ベースランニングのタイム（秒）を小数で入力してください。例: 13.5",
     )
     long_throw = models.IntegerField(
         verbose_name="遠投（m）",
-        help_text="遠投距離（メートル）を入力してください",
+        help_text="遠投距離（メートル）を整数で入力してください。例: 85",
     )
     straight_ball_speed = models.IntegerField(
         verbose_name="ストレート球速（km/h）",
-        help_text="ストレートの球速（km/h）を入力してください",
+        help_text="ストレートの球速（km/h）を整数で入力してください。例: 130",
     )
     hit_ball_speed = models.IntegerField(
         verbose_name="打球速度（km/h）",
-        help_text="打球速度（km/h）を入力してください",
+        help_text="打球速度（km/h）を整数で入力してください。例: 125",
     )
     swing_speed = models.IntegerField(
         verbose_name="スイング速度（km/h）",
-        help_text="スイング速度（km/h）を入力してください",
+        help_text="スイング速度（km/h）を整数で入力してください。例: 111",
     )
     bench_press = models.IntegerField(
         verbose_name="ベンチプレス（kg）",
-        help_text="ベンチプレスの重量（kg）を入力してください",
+        help_text="ベンチプレスの重量（kg）を整数で入力してください。例: 80",
     )
     squat = models.IntegerField(
         verbose_name="スクワット（kg）",
-        help_text="スクワットの重量（kg）を入力してください",
+        help_text="スクワットの重量（kg）を整数で入力してください。例: 100",
     )
 
     status = models.CharField(
