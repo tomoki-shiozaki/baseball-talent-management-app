@@ -104,16 +104,17 @@ class MeasurementRecreateView(LoginRequiredMixin, UserPassesTestMixin, CreateVie
         return reverse_lazy("home")
 
 
-class PlayerPendingApprovalListView(LoginRequiredMixin, ListView):
+class PlayerPendingApprovalListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Measurement
     template_name = "approvals/player_pending_approval_list.html"
     context_object_name = "measurements"
 
+    def test_func(self):
+        # プレイヤーのみアクセス可能にする
+        return self.request.user.is_player
+
     def get_queryset(self):
         user = self.request.user
-
-        if not user.is_player:
-            return Measurement.objects.none()
 
         # 承認履歴に「自分による承認（step=self）」が「済み（承認済または否認）」でないもの
         return (
