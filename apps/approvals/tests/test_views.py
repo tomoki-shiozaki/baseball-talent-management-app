@@ -437,3 +437,84 @@ class TestCoachPendingApprovalListView(TestCase):
 
         # もう承認済みだから一覧に表示されない
         self.assertNotIn(self.measurement, measurements)
+
+
+class TestCoachApprovalCreateView(TestCase):
+    def setUp(self):
+        self.player = User.objects.create_user(
+            username="player", password="pass1234", role="player"
+        )
+        self.manager = User.objects.create_user(
+            username="manager", password="pass1234", role="manager"
+        )
+        self.coach = User.objects.create_user(
+            username="coach", password="pass1234", role="coach"
+        )
+
+        self.measurement = Measurement.objects.create(
+            player=self.player,
+            created_by=self.manager,
+            date=date.today(),
+            sprint_50m=6.2,
+            base_running=13.1,
+            long_throw=85,
+            straight_ball_speed=125,
+            hit_ball_speed=145,
+            swing_speed=105,
+            bench_press=95,
+            squat=160,
+            status="player_approved",
+        )
+
+        self.url = reverse(
+            "approvals:coach_approve",
+            kwargs={"measurement_id": self.measurement.id},
+        )
+
+    def test_anonymous_redirects_to_login(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+
+    def test_uses_correct_template(self):
+        self.client.login(username="coach", password="pass1234")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "approvals/coach_approval_form.html")
+
+    def test_404_when_measurement_not_found(self):
+        self.client.login(username="coach", password="pass1234")
+        url = reverse("approvals:coach_approve", kwargs={"measurement_id": 9999})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_coach_can_approve_and_status_updates(self):
+        self.client.login(username="coach", password="pass1234")
+        response = self.client.post(
+            self.url, {"status": "approved", "comment": "問題ありません"}
+        )
+
+        self.measurement.refresh_from_db()
+        self.assertRedirects(response, reverse("home"))
+
+        approval = MeasurementApproval.objects.get(measurement=self.measurement)
+        self.assertEqual(approval.status, "approved")
+        self.assertEqual(approval.approver, self.coach)
+        self.assertEqual(approval.role, "coach")
+        self.assertEqual(approval.step, "coach")
+        self.assertEqual(self.measurement.status, "coach_approved")
+
+    def test_coach_can_reject_and_status_becomes_rejected(self):
+        self.client.login(username="coach", password="pass1234")
+        response = self.client.post(
+            self.url, {"status": "rejected", "comment": "問題があります"}
+        )
+
+        self.measurement.refresh_from_db()
+        self.assertEqual(self.measurement.status, "rejected")
+
+    def test_context_contains_measurement(self):
+        self.client.login(username="coach", password="pass1234")
+        response = self.client.get(self.url)
+        self.assertIn("m", response.context)
+        self.assertEqual(response.context["m"], self.measurement)
