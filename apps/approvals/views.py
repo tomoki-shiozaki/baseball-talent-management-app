@@ -136,6 +136,9 @@ class PlayerApprovalCreateView(LoginRequiredMixin, CreateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.measurement = get_object_or_404(Measurement, id=kwargs["measurement_id"])
+        # ログインユーザーが対象のプレイヤーであることを確認
+        if self.measurement.player != request.user:
+            return self.handle_no_permission()  # 403 Forbiddenを返す
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
