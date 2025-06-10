@@ -364,3 +364,76 @@ class TestPlayerApprovalCreateView(TestCase):
         self.client.login(username="other_player", password="pass1234")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 403)  # 権限がないのでForbidden
+
+
+class TestCoachPendingApprovalListView(TestCase):
+    def setUp(self):
+        self.player = User.objects.create_user(
+            username="player", password="pass1234", role="player"
+        )
+        self.manager = User.objects.create_user(
+            username="manager", password="pass1234", role="manager"
+        )
+        self.coach = User.objects.create_user(
+            username="coach", password="pass1234", role="coach"
+        )
+
+        self.measurement = Measurement.objects.create(
+            player=self.player,
+            created_by=self.manager,
+            date=date.today(),
+            sprint_50m=6.2,
+            base_running=13.1,
+            long_throw=85,
+            straight_ball_speed=125,
+            hit_ball_speed=145,
+            swing_speed=105,
+            bench_press=95,
+            squat=160,
+            status="player_approved",
+        )
+
+        self.url = reverse("approvals:coach_pending_approvals")
+
+        MeasurementApproval.objects.create(
+            measurement=self.measurement,
+            approver=self.player,
+            role="player",
+            step="self",
+            status="approved",
+        )
+
+    def test_coach_can_access_and_see_measurements(self):
+        self.client.login(username="coach", password="pass1234")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        measurements = response.context["measurements"]
+        self.assertIn(self.measurement, measurements)
+
+    def test_manager_cannot_access(self):
+        self.client.login(username="manager", password="pass1234")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_anonymous_redirects_to_login(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+
+    def test_only_unapproved_measurements_shown(self):
+        self.client.login(username="coach", password="pass1234")
+
+        # 承認済みの承認履歴を作る
+        self.approval = MeasurementApproval.objects.create(
+            measurement=self.measurement,
+            approver=self.coach,
+            role="coach",
+            step="coach",
+            status="approved",
+        )
+
+        response = self.client.get(self.url)
+        measurements = response.context["measurements"]
+
+        # もう承認済みだから一覧に表示されない
+        self.assertNotIn(self.measurement, measurements)

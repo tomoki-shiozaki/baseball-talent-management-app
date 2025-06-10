@@ -167,16 +167,16 @@ class PlayerApprovalCreateView(LoginRequiredMixin, CreateView):
         return context
 
 
-class CoachPendingApprovalListView(LoginRequiredMixin, ListView):
+class CoachPendingApprovalListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Measurement
     template_name = "approvals/coach_pending_approval_list.html"
     context_object_name = "measurements"
 
+    def test_func(self):
+        return self.request.user.is_coach
+
     def get_queryset(self):
         user = self.request.user
-
-        if not user.is_coach:
-            return Measurement.objects.none()
 
         return (
             Measurement.objects.filter(
