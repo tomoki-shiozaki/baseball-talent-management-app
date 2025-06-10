@@ -1,20 +1,25 @@
-from django.contrib.auth import get_user_model
-from django.test import SimpleTestCase, TestCase
+from django.test import TestCase
 from django.urls import reverse
-from apps.accounts.models import CustomUser
+from django.contrib.auth import get_user_model
+from datetime import date
 
-GENERAL = CustomUser.GENERAL
-LIBRARIAN = CustomUser.LIBRARIAN
+from apps.measurements.models import Measurement
+from apps.approvals.models import MeasurementApproval
+
+User = get_user_model()
 
 
-# Create your tests here.
-class HomePageTests(TestCase):
-
-    def test_home_page_status_code(self):
-        response = self.client.get("/")
-        self.assertEqual(
-            response.status_code, 200
-        )  # ステータスコードが200であることを確認
+class TestHomePage(TestCase):
+    def setUp(self):
+        self.manager = User.objects.create_user(
+            username="manager", password="pass1234", role="manager"
+        )
+        self.player = User.objects.create_user(
+            username="player", password="pass1234", role="player"
+        )
+        self.coach = User.objects.create_user(
+            username="coach", password="pass1234", role="coach"
+        )
 
     def test_view_url_by_name(self):
         response = self.client.get(reverse("home"))
@@ -25,40 +30,66 @@ class HomePageTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "home.html")
 
-
-class TopPageViewTests(TestCase):
-    def setUp(self):
-        self.url = reverse("home")
-
-    def test_top_page_for_anonymous_user(self):
-        response = self.client.get(self.url)
-        self.assertContains(response, "ログインしてください")
-        self.assertContains(response, f'href="{reverse("login")}"')
-        self.assertContains(response, f'href="{reverse("signup")}"')
-
-    def test_top_page_for_general_user(self):
-        user = get_user_model().objects.create_user(
-            username="user",
-            email="user@example.com",
-            password="testpass",
-            role=GENERAL,
+    def test_manager_rejected_count(self):
+        Measurement.objects.create(
+            player=self.player,
+            created_by=self.manager,
+            date=date.today(),
+            sprint_50m=6.2,
+            base_running=13.1,
+            long_throw=85,
+            straight_ball_speed=125,
+            hit_ball_speed=145,
+            swing_speed=105,
+            bench_press=95,
+            squat=160,
+            status="rejected",
         )
-        self.client.login(username="user", password="testpass")
-        response = self.client.get(self.url)
-        self.assertContains(response, "一般ユーザー向けの案内")
-        self.assertContains(response, f'href="{reverse("library:search")}"')
-        self.assertContains(
-            response, f'href="{reverse("user_libraries:user_loan_list")}"'
-        )
+        self.client.login(username="manager", password="pass1234")
+        response = self.client.get(reverse("home"))
+        self.assertEqual(response.context["rejected_count"], 1)
 
-    def test_top_page_for_librarian_user(self):
-        librarian = get_user_model().objects.create_user(
-            username="librarian",
-            email="lib@example.com",
-            password="testpass",
-            role=LIBRARIAN,
+    def test_player_pending_count(self):
+        Measurement.objects.create(
+            player=self.player,
+            created_by=self.manager,
+            date=date.today(),
+            sprint_50m=6.2,
+            base_running=13.1,
+            long_throw=85,
+            straight_ball_speed=125,
+            hit_ball_speed=145,
+            swing_speed=105,
+            bench_press=95,
+            squat=160,
+            status="pending",
         )
-        self.client.login(username="librarian", password="testpass")
-        response = self.client.get(self.url)
-        self.assertContains(response, "司書向けの案内")
-        self.assertContains(response, f'href="{reverse("catalog:new")}"')
+        self.client.login(username="player", password="pass1234")
+        response = self.client.get(reverse("home"))
+        self.assertEqual(response.context["pending_count"], 1)
+
+    def test_coach_pending_count(self):
+        m = Measurement.objects.create(
+            player=self.player,
+            created_by=self.manager,
+            date=date.today(),
+            sprint_50m=6.2,
+            base_running=13.1,
+            long_throw=85,
+            straight_ball_speed=125,
+            hit_ball_speed=145,
+            swing_speed=105,
+            bench_press=95,
+            squat=160,
+            status="player_approved",
+        )
+        MeasurementApproval.objects.create(
+            measurement=m,
+            approver=self.player,
+            role="player",
+            step="self",
+            status="approved",
+        )
+        self.client.login(username="coach", password="pass1234")
+        response = self.client.get(reverse("home"))
+        self.assertEqual(response.context["coach_pending_count"], 1)
