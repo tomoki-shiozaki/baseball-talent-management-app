@@ -21,14 +21,17 @@ class TeamMemberListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return self.request.user.is_coach or self.request.user.is_director
 
     def get_queryset(self):
-        return User.objects.filter(role__in=["player", "manager"])
+        return User.objects.filter(role__in=["player", "manager"]).order_by("id")
 
 
-class TeamMemberCreateView(LoginRequiredMixin, CreateView):
+class TeamMemberCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = User
     form_class = TeamMemberCreateForm
     template_name = "members/team_member_new.html"
     success_url = reverse_lazy("members:team_member_list")
+
+    def test_func(self):
+        return self.request.user.is_coach or self.request.user.is_director
 
 
 class TeamMemberRetireView(LoginRequiredMixin, UserPassesTestMixin, FormView):
