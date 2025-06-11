@@ -12,10 +12,13 @@ User = get_user_model()
 
 
 # Create your views here.
-class TeamMemberListView(LoginRequiredMixin, ListView):
+class TeamMemberListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = User
     template_name = "members/team_member_list.html"
     paginate_by = 10
+
+    def test_func(self):
+        return self.request.user.is_coach or self.request.user.is_director
 
     def get_queryset(self):
         return User.objects.filter(role__in=["player", "manager"])
