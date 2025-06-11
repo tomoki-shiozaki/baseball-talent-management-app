@@ -41,7 +41,7 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
     )
-    list_filter = ("role", "status", "grade")
+    list_filter = ("role", "status", "grade", "is_active", "is_staff")
 
 
 admin.site.register(CustomUser, CustomUserAdmin)

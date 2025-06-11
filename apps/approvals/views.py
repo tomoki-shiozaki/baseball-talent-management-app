@@ -41,7 +41,7 @@ class RejectedApprovalDetailView(LoginRequiredMixin, UserPassesTestMixin, Detail
 
     def test_func(self):
         # マネージャーのみ
-        return self.request.user.is_authenticated and self.request.user.is_manager
+        return self.request.user.is_manager
 
 
 class MeasurementRecreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
@@ -104,16 +104,17 @@ class MeasurementRecreateView(LoginRequiredMixin, UserPassesTestMixin, CreateVie
         return reverse_lazy("home")
 
 
-class PlayerPendingApprovalListView(LoginRequiredMixin, ListView):
+class PlayerPendingApprovalListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Measurement
     template_name = "approvals/player_pending_approval_list.html"
     context_object_name = "measurements"
 
+    def test_func(self):
+        # プレイヤーのみアクセス可能にする
+        return self.request.user.is_player
+
     def get_queryset(self):
         user = self.request.user
-
-        if not user.is_player:
-            return Measurement.objects.none()
 
         # 承認履歴に「自分による承認（step=self）」が「済み（承認済または否認）」でないもの
         return (
@@ -135,6 +136,9 @@ class PlayerApprovalCreateView(LoginRequiredMixin, CreateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.measurement = get_object_or_404(Measurement, id=kwargs["measurement_id"])
+        # ログインユーザーが対象のプレイヤーであることを確認
+        if self.measurement.player != request.user:
+            return self.handle_no_permission()  # 403 Forbiddenを返す
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -163,16 +167,16 @@ class PlayerApprovalCreateView(LoginRequiredMixin, CreateView):
         return context
 
 
-class CoachPendingApprovalListView(LoginRequiredMixin, ListView):
+class CoachPendingApprovalListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Measurement
     template_name = "approvals/coach_pending_approval_list.html"
     context_object_name = "measurements"
 
+    def test_func(self):
+        return self.request.user.is_coach
+
     def get_queryset(self):
         user = self.request.user
-
-        if not user.is_coach:
-            return Measurement.objects.none()
 
         return (
             Measurement.objects.filter(

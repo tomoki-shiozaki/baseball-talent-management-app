@@ -47,7 +47,7 @@ class MeasurementCreateView(LoginRequiredMixin, CreateView):
         return context
 
 
-class PlayerListView(ListView):
+class PlayerListView(LoginRequiredMixin, ListView):
     model = get_user_model()
     template_name = "measurements/player_list.html"
     context_object_name = "players"
