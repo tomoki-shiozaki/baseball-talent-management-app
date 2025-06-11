@@ -53,3 +53,93 @@ class TestMeasurementCreateView(TestCase):
         invalid_url = reverse("measurements:new", kwargs={"player_id": 9999})
         response = self.client.get(invalid_url)
         self.assertEqual(response.status_code, 404)
+
+
+class TestPlayerListView(TestCase):
+    def setUp(self):
+        self.manager = User.objects.create_user(
+            username="manager", password="pass1234", role="manager"
+        )
+        self.player = User.objects.create_user(
+            username="player1", password="pass1234", role="player"
+        )
+        self.url = reverse("measurements:player_list")
+
+    def test_get_request_returns_200_and_contains_player(self):
+        self.client.login(username="manager", password="pass1234")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        players = response.context["players"]
+        self.assertIn(self.player, players)
+        self.assertNotIn(self.manager, players)
+
+    def test_redirect_if_not_logged_in(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+
+
+class TestMyMeasurementListView(TestCase):
+    def setUp(self):
+        self.manager = User.objects.create_user(
+            username="manager", password="pass1234", role="manager"
+        )
+        self.player = User.objects.create_user(
+            username="player1",
+            password="pass1234",
+            role="player",
+            first_name="太郎",
+            last_name="山田",
+        )
+        self.other_player = User.objects.create_user(
+            username="player2", password="pass1234", role="player"
+        )
+
+        # 自分の承認済み記録（表示対象）
+        self.my_record = Measurement.objects.create(
+            player=self.player,
+            created_by=self.manager,
+            date=date(2025, 6, 1),
+            status="coach_approved",
+            sprint_50m=6.0,
+            base_running=13.0,
+            long_throw=85,
+            straight_ball_speed=130,
+            hit_ball_speed=125,
+            swing_speed=110,
+            bench_press=90,
+            squat=140,
+        )
+
+        # 他人の記録（表示対象外）
+        Measurement.objects.create(
+            player=self.other_player,
+            created_by=self.manager,
+            date=date(2025, 6, 1),
+            status="coach_approved",
+            sprint_50m=6.0,
+            base_running=13.0,
+            long_throw=85,
+            straight_ball_speed=130,
+            hit_ball_speed=125,
+            swing_speed=110,
+            bench_press=90,
+            squat=140,
+        )
+
+        self.client.login(username="player1", password="pass1234")
+        self.url = reverse("measurements:my_records")
+
+    def test_only_approved_measurements_for_logged_in_user_are_displayed(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        measurements = response.context["measurements"]
+        self.assertIn(self.my_record, measurements)
+        self.assertEqual(len(measurements), 1)  # 他人の記録は含まれない
+
+    def test_context_contains_player_name_and_filters(self):
+        response = self.client.get(self.url)
+        context = response.context
+        self.assertEqual(context["player_name"], "太郎 山田")
+        self.assertEqual(context["current_order"], "desc")
+        self.assertEqual(context["current_status"], "approved")
