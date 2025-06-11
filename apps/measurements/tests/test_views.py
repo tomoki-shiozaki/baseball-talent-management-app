@@ -143,3 +143,52 @@ class TestMyMeasurementListView(TestCase):
         self.assertEqual(context["player_name"], "太郎 山田")
         self.assertEqual(context["current_order"], "desc")
         self.assertEqual(context["current_status"], "approved")
+
+
+class TestMemberListView(TestCase):
+    def setUp(self):
+        self.coach = User.objects.create_user(
+            username="coach", password="pass", role="coach"
+        )
+        self.director = User.objects.create_user(
+            username="director", password="pass", role="director"
+        )
+        self.manager = User.objects.create_user(
+            username="manager", password="pass", role="manager"
+        )
+        self.player = User.objects.create_user(
+            username="player", password="pass", role="player"
+        )
+
+        self.active_player = User.objects.create_user(
+            username="active_player", password="pass", role="player", status="active"
+        )
+        self.inactive_player = User.objects.create_user(
+            username="inactive_player",
+            password="pass",
+            role="player",
+            status="inactive",
+        )
+
+        self.url = reverse("measurements:member_list")
+
+    def test_access_granted_to_coach_and_director(self):
+        for user in [self.coach, self.director]:
+            self.client.login(username=user.username, password="pass")
+            response = self.client.get(self.url)
+            self.assertEqual(response.status_code, 200)
+            self.client.logout()
+
+    def test_access_denied_to_manager_and_player(self):
+        for user in [self.manager, self.player]:
+            self.client.login(username=user.username, password="pass")
+            response = self.client.get(self.url)
+            self.assertEqual(response.status_code, 403)
+            self.client.logout()
+
+    def test_queryset_only_returns_active_players(self):
+        self.client.login(username="coach", password="pass")
+        response = self.client.get(self.url)
+        players = response.context["players"]
+        self.assertIn(self.active_player, players)
+        self.assertNotIn(self.inactive_player, players)
