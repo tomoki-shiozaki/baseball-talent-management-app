@@ -88,3 +88,36 @@ class TestTeamMemberCreateView(TestCase):
         )
         self.assertRedirects(response, reverse("members:team_member_list"))
         self.assertTrue(User.objects.filter(username="newplayer").exists())
+
+
+class TestTeamMemberRetireView(TestCase):
+    def setUp(self):
+        self.coach = User.objects.create_user(
+            username="coach", password="pass1234", role="coach"
+        )
+        self.other = User.objects.create_user(
+            username="other", password="pass1234", role="player"
+        )
+        self.member = User.objects.create_user(
+            username="member", password="pass1234", role="player", status="active"
+        )
+        self.url = reverse("members:team_member_retire", kwargs={"pk": self.member.pk})
+
+    def test_access_denied_if_not_coach_or_director(self):
+        self.client.login(username="other", password="pass1234")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_get_renders_template_and_context(self):
+        self.client.login(username="coach", password="pass1234")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "members/team_member_retire_confirm.html")
+        self.assertEqual(response.context["member"], self.member)
+
+    def test_post_retire_changes_status_and_redirects(self):
+        self.client.login(username="coach", password="pass1234")
+        response = self.client.post(self.url, data={"confirm": True})
+        self.assertRedirects(response, reverse("members:team_member_list"))
+        self.member.refresh_from_db()
+        self.assertEqual(self.member.status, "retired")
