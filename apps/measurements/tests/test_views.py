@@ -16,10 +16,35 @@ class TestMeasurementCreateView(TestCase):
         self.player = User.objects.create_user(
             username="player1", password="pass1234", role="player"
         )
-        self.client.login(username="manager", password="pass1234")
+        self.coach = User.objects.create_user(
+            username="coach", password="pass1234", role="coach"
+        )
+        self.director = User.objects.create_user(
+            username="director", password="pass1234", role="director"
+        )
         self.url = reverse("measurements:new", kwargs={"player_id": self.player.id})
 
+    def test_access_granted_to_manager(self):
+        self.client.login(username="manager", password="pass1234")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("player", response.context)
+        self.assertEqual(response.context["player"], self.player)
+        self.client.logout()
+
+    def test_access_denied_to_player_and_coach_and_director(self):
+        for user in [
+            self.player,
+            self.coach,
+            self.director,
+        ]:
+            self.client.login(username=user.username, password="pass1234")
+            response = self.client.get(self.url)
+            self.assertEqual(response.status_code, 403)
+            self.client.logout()
+
     def test_get_request_returns_200_and_contains_player(self):
+        self.client.login(username="manager", password="pass1234")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("player", response.context)
@@ -37,6 +62,7 @@ class TestMeasurementCreateView(TestCase):
             "bench_press": 95,
             "squat": 160,
         }
+        self.client.login(username="manager", password="pass1234")
         response = self.client.post(self.url, data)
         # POST後はリダイレクト（成功）
         self.assertEqual(response.status_code, 302)
@@ -63,15 +89,32 @@ class TestPlayerListView(TestCase):
         self.player = User.objects.create_user(
             username="player1", password="pass1234", role="player"
         )
+        self.coach = User.objects.create_user(
+            username="coach", password="pass1234", role="coach"
+        )
+        self.director = User.objects.create_user(
+            username="director", password="pass1234", role="director"
+        )
         self.url = reverse("measurements:player_list")
 
-    def test_get_request_returns_200_and_contains_player(self):
+    def test_access_granted_to_manager(self):
         self.client.login(username="manager", password="pass1234")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         players = response.context["players"]
         self.assertIn(self.player, players)
         self.assertNotIn(self.manager, players)
+
+    def test_access_denied_to_player_and_coach_and_director(self):
+        for user in [
+            self.player,
+            self.coach,
+            self.director,
+        ]:
+            self.client.login(username=user.username, password="pass1234")
+            response = self.client.get(self.url)
+            self.assertEqual(response.status_code, 403)
+            self.client.logout()
 
     def test_redirect_if_not_logged_in(self):
         response = self.client.get(self.url)
@@ -90,6 +133,12 @@ class TestMyMeasurementListView(TestCase):
             role="player",
             first_name="太郎",
             last_name="山田",
+        )
+        self.coach = User.objects.create_user(
+            username="coach", password="pass1234", role="coach"
+        )
+        self.director = User.objects.create_user(
+            username="director", password="pass1234", role="director"
         )
         self.other_player = User.objects.create_user(
             username="player2", password="pass1234", role="player"
@@ -126,23 +175,39 @@ class TestMyMeasurementListView(TestCase):
             bench_press=90,
             squat=140,
         )
-
-        self.client.login(username="player1", password="pass1234")
         self.url = reverse("measurements:my_records")
 
     def test_only_approved_measurements_for_logged_in_user_are_displayed(self):
+        self.client.login(username="player1", password="pass1234")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         measurements = response.context["measurements"]
         self.assertIn(self.my_record, measurements)
         self.assertEqual(len(measurements), 1)  # 他人の記録は含まれない
 
+    def test_access_denied_to_manager_and_coach_and_director(self):
+        for user in [
+            self.manager,
+            self.coach,
+            self.director,
+        ]:
+            self.client.login(username=user.username, password="pass1234")
+            response = self.client.get(self.url)
+            self.assertEqual(response.status_code, 403)
+            self.client.logout()
+
     def test_context_contains_player_name_and_filters(self):
+        self.client.login(username="player1", password="pass1234")
         response = self.client.get(self.url)
         context = response.context
         self.assertEqual(context["player_name"], "太郎 山田")
         self.assertEqual(context["current_order"], "desc")
         self.assertEqual(context["current_status"], "approved")
+
+    def test_redirect_if_not_logged_in(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
 
 
 class TestMemberListView(TestCase):

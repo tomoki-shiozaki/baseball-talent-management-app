@@ -12,7 +12,7 @@ from apps.approvals.models import MeasurementApproval
 
 # Create your views here.
 # マネージャー用
-class MeasurementCreateView(LoginRequiredMixin, CreateView):
+class MeasurementCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Measurement
     template_name = "measurements/measurement_form.html"
     fields = (
@@ -27,6 +27,9 @@ class MeasurementCreateView(LoginRequiredMixin, CreateView):
         "squat",
     )
     success_url = reverse_lazy("measurements:player_list")
+
+    def test_func(self):
+        return self.request.user.is_manager
 
     def dispatch(self, request, *args, **kwargs):
         # URLのplayer_idから部員（プレイヤー）を取得
@@ -47,20 +50,26 @@ class MeasurementCreateView(LoginRequiredMixin, CreateView):
         return context
 
 
-class PlayerListView(LoginRequiredMixin, ListView):
+class PlayerListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = get_user_model()
     template_name = "measurements/player_list.html"
     context_object_name = "players"
+
+    def test_func(self):
+        return self.request.user.is_manager
 
     def get_queryset(self):
         return get_user_model().objects.filter(role="player", status="active")
 
 
 # 部員用
-class MyMeasurementListView(LoginRequiredMixin, ListView):
+class MyMeasurementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Measurement
     template_name = "measurements/my_measurement_list.html"
     context_object_name = "measurements"
+
+    def test_func(self):
+        return self.request.user.is_player
 
     def get_queryset(self):
         user = self.request.user
