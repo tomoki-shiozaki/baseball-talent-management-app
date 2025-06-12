@@ -129,10 +129,14 @@ class PlayerPendingApprovalListView(LoginRequiredMixin, UserPassesTestMixin, Lis
         )
 
 
-class PlayerApprovalCreateView(LoginRequiredMixin, CreateView):
+class PlayerApprovalCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = MeasurementApproval
     template_name = "approvals/player_approval_form.html"
     fields = ["status", "comment"]  # 承認 or 否認、コメント入力
+
+    def test_func(self):
+        # プレイヤーのみアクセス可能にする
+        return self.request.user.is_player
 
     def dispatch(self, request, *args, **kwargs):
         self.measurement = get_object_or_404(Measurement, id=kwargs["measurement_id"])

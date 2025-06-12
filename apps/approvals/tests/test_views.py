@@ -288,6 +288,12 @@ class TestPlayerApprovalCreateView(TestCase):
         self.manager = User.objects.create_user(
             username="manager", password="pass1234", role="manager"
         )
+        self.coach = User.objects.create_user(
+            username="coach", password="pass1234", role="coach"
+        )
+        self.director = User.objects.create_user(
+            username="director", password="pass1234", role="director"
+        )
         self.other_player = User.objects.create_user(
             username="other_player", password="pass1234", role="player"
         )
@@ -322,6 +328,17 @@ class TestPlayerApprovalCreateView(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "approvals/player_approval_form.html")
+
+    def test_access_denied_to_manager_and_coach_and_director(self):
+        for user in [
+            self.manager,
+            self.coach,
+            self.director,
+        ]:
+            self.client.login(username=user.username, password="pass1234")
+            response = self.client.get(self.url)
+            self.assertEqual(response.status_code, 403)
+            self.client.logout()
 
     def test_404_when_measurement_not_found(self):
         self.client.login(username="player", password="pass1234")
