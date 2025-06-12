@@ -12,7 +12,7 @@ from apps.approvals.models import MeasurementApproval
 
 # Create your views here.
 # マネージャー用
-class MeasurementCreateView(LoginRequiredMixin, CreateView):
+class MeasurementCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Measurement
     template_name = "measurements/measurement_form.html"
     fields = (
@@ -27,6 +27,9 @@ class MeasurementCreateView(LoginRequiredMixin, CreateView):
         "squat",
     )
     success_url = reverse_lazy("measurements:player_list")
+
+    def test_func(self):
+        return self.request.user.is_manager
 
     def dispatch(self, request, *args, **kwargs):
         # URLのplayer_idから部員（プレイヤー）を取得
