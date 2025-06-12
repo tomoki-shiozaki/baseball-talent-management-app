@@ -63,10 +63,13 @@ class PlayerListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 
 # 部員用
-class MyMeasurementListView(LoginRequiredMixin, ListView):
+class MyMeasurementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Measurement
     template_name = "measurements/my_measurement_list.html"
     context_object_name = "measurements"
+
+    def test_func(self):
+        return self.request.user.is_player
 
     def get_queryset(self):
         user = self.request.user

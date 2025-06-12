@@ -134,6 +134,12 @@ class TestMyMeasurementListView(TestCase):
             first_name="太郎",
             last_name="山田",
         )
+        self.coach = User.objects.create_user(
+            username="coach", password="pass1234", role="coach"
+        )
+        self.director = User.objects.create_user(
+            username="director", password="pass1234", role="director"
+        )
         self.other_player = User.objects.create_user(
             username="player2", password="pass1234", role="player"
         )
@@ -169,23 +175,39 @@ class TestMyMeasurementListView(TestCase):
             bench_press=90,
             squat=140,
         )
-
-        self.client.login(username="player1", password="pass1234")
         self.url = reverse("measurements:my_records")
 
     def test_only_approved_measurements_for_logged_in_user_are_displayed(self):
+        self.client.login(username="player1", password="pass1234")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         measurements = response.context["measurements"]
         self.assertIn(self.my_record, measurements)
         self.assertEqual(len(measurements), 1)  # 他人の記録は含まれない
 
+    def test_access_denied_to_manager_and_coach_and_director(self):
+        for user in [
+            self.manager,
+            self.coach,
+            self.director,
+        ]:
+            self.client.login(username=user.username, password="pass1234")
+            response = self.client.get(self.url)
+            self.assertEqual(response.status_code, 403)
+            self.client.logout()
+
     def test_context_contains_player_name_and_filters(self):
+        self.client.login(username="player1", password="pass1234")
         response = self.client.get(self.url)
         context = response.context
         self.assertEqual(context["player_name"], "太郎 山田")
         self.assertEqual(context["current_order"], "desc")
         self.assertEqual(context["current_status"], "approved")
+
+    def test_redirect_if_not_logged_in(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
 
 
 class TestMemberListView(TestCase):
