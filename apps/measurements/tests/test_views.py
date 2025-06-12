@@ -89,15 +89,32 @@ class TestPlayerListView(TestCase):
         self.player = User.objects.create_user(
             username="player1", password="pass1234", role="player"
         )
+        self.coach = User.objects.create_user(
+            username="coach", password="pass1234", role="coach"
+        )
+        self.director = User.objects.create_user(
+            username="director", password="pass1234", role="director"
+        )
         self.url = reverse("measurements:player_list")
 
-    def test_get_request_returns_200_and_contains_player(self):
+    def test_access_granted_to_manager(self):
         self.client.login(username="manager", password="pass1234")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         players = response.context["players"]
         self.assertIn(self.player, players)
         self.assertNotIn(self.manager, players)
+
+    def test_access_denied_to_player_and_coach_and_director(self):
+        for user in [
+            self.player,
+            self.coach,
+            self.director,
+        ]:
+            self.client.login(username=user.username, password="pass1234")
+            response = self.client.get(self.url)
+            self.assertEqual(response.status_code, 403)
+            self.client.logout()
 
     def test_redirect_if_not_logged_in(self):
         response = self.client.get(self.url)
