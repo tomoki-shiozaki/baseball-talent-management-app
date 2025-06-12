@@ -49,6 +49,9 @@
         {% if user.is_coach or user.is_director %}
         <a class="btn btn-outline-secondary btn-lg mx-3 my-2" href="{% url 'measurements:member_list' %}">部員別測定記録閲覧</a>
         <a class="btn btn-warning btn-lg mx-3 my-2" href="{% url 'members:team_member_list' %}">部員管理</a>
+        <a class="btn btn-info btn-lg mx-3 my-2" href="{% url 'team_analytics:dashboard' %}">
+            チーム分析を見る
+        </a>
         {% endif %}
         </p>
     </div>

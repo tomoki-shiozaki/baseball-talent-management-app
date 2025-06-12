@@ -1,0 +1,13 @@
+.card {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 6px;
+    display: inline-block;
+    width: 200px;
+    text-align: center;
+}
+
+.card h3 {
+    margin: 0.5rem 0;
+}
