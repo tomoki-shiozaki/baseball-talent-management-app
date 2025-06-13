@@ -6,11 +6,25 @@ document.addEventListener('DOMContentLoaded', function () {
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['50m走', 'ベースラン'],
+            labels: ['50m走', 'ベースランニング'],
             datasets: [{
                 label: '秒',
                 data: [summary.avg_sprint_50m, summary.avg_base_running],
                 backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            }]
+        }
+    });
+
+    // 肩力チャート
+    const throwingCtx = document.getElementById('throwingChart').getContext('2d');
+    new Chart(throwingCtx, {
+        type: 'bar',
+        data: {
+            labels: ['遠投', 'ストレート球速'],
+            datasets: [{
+                label: 'm',
+                data: [summary.avg_long_throw, summary.avg_straight_ball_speed],
+                backgroundColor: 'rgba(144, 238, 144, 0.5)',
             }]
         }
     });

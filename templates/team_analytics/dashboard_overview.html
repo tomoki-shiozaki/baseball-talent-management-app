@@ -20,13 +20,32 @@
     <section class="dashboard-card">
         <h2>🏃‍♂️ 走力</h2>
         <canvas id="speedChart"></canvas>
+        <p>
+            ・50m走 平均：{{ summary.avg_sprint_50m|floatformat:2 }} 秒<br>
+            ・ベースランニング 平均：{{ summary.avg_base_running|floatformat:2 }} 秒
+        </p>
         <a href="{% url 'team_analytics:sprint_detail' %}">▶ 詳細を見る</a>
     </section>
 
-    <!-- 打撃セクション -->
+    <!-- 肩力セクション -->
     <section class="dashboard-card">
-        <h2>⚾ 打撃</h2>
+        <h2>🤾 肩力</h2>
+        <canvas id="throwingChart"></canvas>
+        <p>
+            ・遠投 平均：{{ summary.avg_long_throw|floatformat:2 }} m<br>
+            ・ストレート球速 平均：{{ summary.avg_straight_ball_speed|floatformat:2 }} m
+        </p>
+        <a href="{% url 'team_analytics:sprint_detail' %}">▶ 詳細を見る</a>
+    </section>
+
+    <!-- 打力セクション -->
+    <section class="dashboard-card">
+        <h2>⚾ 打力</h2>
         <canvas id="battingChart"></canvas>
+        <p>
+            ・打球速度 平均：{{ summary.avg_hit_ball_speed|floatformat:2 }} km/h<br>
+            ・スイング速度 平均：{{ summary.avg_swing_speed|floatformat:2 }} km/h
+        </p>
         <a href="{% url 'team_analytics:hitting_detail' %}">▶ 詳細を見る</a>
     </section>
 
@@ -34,6 +53,10 @@
     <section class="dashboard-card">
         <h2>💪 筋力</h2>
         <canvas id="strengthChart"></canvas>
+        <p>
+            ・ベンチプレス 平均：{{ summary.avg_bench_press|floatformat:2 }} kg<br>
+            ・スクワット 平均：{{ summary.avg_squat|floatformat:2 }} kg
+        </p>
         <a href="{% url 'team_analytics:strength_detail' %}">▶ 詳細を見る</a>
     </section>
 
