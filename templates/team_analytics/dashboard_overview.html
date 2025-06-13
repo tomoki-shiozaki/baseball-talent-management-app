@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}チーム全体の傾向ダッシュボード{% endblock title %}
+
+{% block extra_css %}
+<!-- チーム分析のダッシュボード専用のCSSを読み込む -->
+<link href="{% static 'css/team_analytics/dashboard_overview.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+{{ summary|json_script:"summary" }}
+
+<h1>チーム全体の傾向ダッシュボード</h1>
+
+<div class="dashboard-grid">
+
+    <!-- 走力セクション -->
+    <section class="dashboard-card">
+        <h2>🏃‍♂️ 走力</h2>
+        <canvas id="speedChart"></canvas>
+        <a href="{% url 'team_analytics:sprint_detail' %}">▶ 詳細を見る</a>
+    </section>
+
+    <!-- 打撃セクション -->
+    <section class="dashboard-card">
+        <h2>⚾ 打撃</h2>
+        <canvas id="battingChart"></canvas>
+        <a href="{% url 'team_analytics:hitting_detail' %}">▶ 詳細を見る</a>
+    </section>
+
+    <!-- 筋力セクション -->
+    <section class="dashboard-card">
+        <h2>💪 筋力</h2>
+        <canvas id="strengthChart"></canvas>
+        <a href="{% url 'team_analytics:strength_detail' %}">▶ 詳細を見る</a>
+    </section>
+
+</div>
+
+{% endblock content %}
+
+{% block extra_js %}
+<!-- JavaScript-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+<script src="{% static 'js/team_analytics/dashboard_overview.js' %}"></script>
+{% endblock %}

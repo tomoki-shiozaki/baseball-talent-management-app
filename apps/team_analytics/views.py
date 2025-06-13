@@ -29,7 +29,7 @@ def dashboard(request):
         "sprint_values": sprint_values,
         "ball_stats": ball_stats,
     }
-    return render(request, "team_analytics/dashboard.html", context)
+    return render(request, "team_analytics/dashboard_old.html", context)
 
 
 def sprint_50m_monthly_avg(request):
@@ -50,3 +50,34 @@ def sprint_50m_monthly_avg(request):
         "values": values,
     }
     return render(request, "team_analytics/sprint_50m_monthly_avg.html", context)
+
+
+def dashboard_overview(request):
+    approved_data = Measurement.objects.filter(status="coach_approved")
+
+    summary = approved_data.aggregate(
+        avg_sprint_50m=Avg("sprint_50m"),
+        avg_base_running=Avg("base_running"),
+        avg_long_throw=Avg("long_throw"),
+        avg_straight_ball_speed=Avg("straight_ball_speed"),
+        avg_hit_ball_speed=Avg("hit_ball_speed"),
+        avg_swing_speed=Avg("swing_speed"),
+        avg_bench_press=Avg("bench_press"),
+        avg_squat=Avg("squat"),
+    )
+
+    return render(
+        request, "team_analytics/dashboard_overview.html", {"summary": summary}
+    )
+
+
+def sprint_detail(request):
+    return render(request, "dashboard/sprint_detail.html")
+
+
+def hitting_detail(request):
+    return render(request, "dashboard/hitting_detail.html")
+
+
+def strength_detail(request):
+    return render(request, "dashboard/strength_detail.html")
