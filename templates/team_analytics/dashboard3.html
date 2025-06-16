@@ -12,9 +12,7 @@
 
 {{ labels|json_script:"labels" }}
 
-{{ sprint_values|json_script:"sprint-values" }}
-{{ base_running_values|json_script:"base-running-values" }}
-{{ long_throw_values|json_script:"long-throw-values" }}
+{{ measurement_values|json_script:"measurement-values" }}
 
 {{ ball_stats|json_script:"ball-stats" }}
 
@@ -75,11 +73,6 @@
         <a href="{% url 'team_analytics:strength_detail' %}">▶ 詳細を見る</a>
     </section>
 
-</div>
-
-<div>
-    <h2>月別平均タイム推移</h2>
-    <canvas id="sprintChart" width="800" height="400"></canvas>
 </div>
 
 <div>

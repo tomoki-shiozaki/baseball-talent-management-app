@@ -95,7 +95,7 @@ def strength_detail(request):
 
 def dashboard3(request):
     # 1. 種目を一覧で定義
-    event_fields = {
+    measurement_fields = {
         "50m走": "sprint_50m",
         "ベースラン": "base_running",
         "遠投": "long_throw",
@@ -105,36 +105,34 @@ def dashboard3(request):
     qs = (
         Measurement.objects.filter(status="coach_approved")
         .annotate(month=TruncMonth("date"))
-        .values("month", *event_fields.values())
+        .values("month", *measurement_fields.values())
         .order_by("month")
     )
 
     # 3. defaultdict で種目ごとのデータをまとめる
-    event_data = {label: defaultdict(list) for label in event_fields}
+    measurement_data = {label: defaultdict(list) for label in measurement_fields}
 
     for row in qs:
         month = row["month"]
-        for label, field in event_fields.items():
+        for label, field in measurement_fields.items():
             value = row.get(field)
             if value is not None:
-                event_data[label][month].append(value)
+                measurement_data[label][month].append(value)
 
     # 4. 月ごとの平均を計算
-    event_avg = {label: calc_avg(data_dict) for label, data_dict in event_data.items()}
+    measurement_avg = {
+        label: calc_avg(data_dict) for label, data_dict in measurement_data.items()
+    }
 
     # 5. X軸（月）の統一
-    all_months = sorted(set().union(*[avg.keys() for avg in event_avg.values()]))
+    all_months = sorted(set().union(*[avg.keys() for avg in measurement_avg.values()]))
     labels = [m.strftime("%Y-%m") for m in all_months]
 
     # 6. 種目ごとの値リストを整形
-    event_values = {
+    measurement_values = {
         label: [avg.get(m, None) for m in all_months]
-        for label, avg in event_avg.items()
+        for label, avg in measurement_avg.items()
     }
-
-    sprint_values = event_values["50m走"]
-    base_running_values = event_values["ベースラン"]
-    long_throw_values = event_values["遠投"]
 
     # 球速の平均・最大・最小
     ball_stats = Measurement.objects.aggregate(
@@ -145,9 +143,7 @@ def dashboard3(request):
 
     context = {
         "labels": labels,
-        "sprint_values": sprint_values,
-        "base_running_values": base_running_values,
-        "long_throw_values": long_throw_values,
+        "measurement_values": measurement_values,
         "ball_stats": ball_stats,
     }
     return render(request, "team_analytics/dashboard3.html", context)

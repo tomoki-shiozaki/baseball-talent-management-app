@@ -1,7 +1,5 @@
 const labels = JSON.parse(document.getElementById('labels').textContent);
-const sprint_values = JSON.parse(document.getElementById('sprint-values').textContent);
-const base_running_values = JSON.parse(document.getElementById('base-running-values').textContent);
-const long_throw_values = JSON.parse(document.getElementById('long-throw-values').textContent);
+const measurement_values = JSON.parse(document.getElementById('measurement-values').textContent);
 
 // グラフ生成関数
 function createLineChart(canvasId, label, data, borderColor, backgroundColor, yAxisTitle) {
@@ -52,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
     createLineChart(
         'sprintChart',
         '50m走平均タイム（秒）',
-        sprint_values,
+        measurement_values["50m走"],
         'rgba(75, 192, 192, 1)',
         'rgba(75, 192, 192, 0.2)',
         '秒'
@@ -61,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
     createLineChart(
         'baseRunningChart',
         'ベースランニング平均タイム（秒）',
-        base_running_values,
+        measurement_values["ベースラン"],
         'rgba(255, 99, 132, 1)',
         'rgba(255, 99, 132, 0.2)',
         '秒'
@@ -70,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
     createLineChart(
         'longThrowChart',
         '遠投平均距離（m）',
-        long_throw_values,
+        measurement_values["遠投"],
         'rgba(54, 162, 235, 1)',
         'rgba(54, 162, 235, 0.2)',
         'メートル'
