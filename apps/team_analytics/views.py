@@ -135,60 +135,6 @@ def dashboard3(request):
     base_running_values = event_values["ベースラン"]
     long_throw_values = event_values["遠投"]
 
-    # # 測定期（年と月）を取得。
-    # qs = (
-    #     Measurement.objects.annotate(month=TruncMonth("date"))
-    #     .values("month", "sprint_50m", "base_running")
-    #     .order_by("month")
-    # )
-
-    # sprint_data = defaultdict(list)
-    # base_running_data = defaultdict(list)
-
-    # for row in qs:
-    #     month = row["month"]
-    #     sprint_data[month].append(row["sprint_50m"])
-    #     base_running_data[month].append(row["base_running"])
-
-    # sprint_avg = calc_avg(sprint_data)
-    # base_running_avg = calc_avg(base_running_data)
-
-    # # 共通のX軸
-    # # 各種目の平均値辞書をまとめる
-    # avg_dicts = [
-    #     sprint_avg,
-    #     base_running_avg,
-    # ]
-
-    # # すべての月をまとめて取得（和集合）
-    # all_months = sorted(set().union(*[d.keys() for d in avg_dicts]))
-    # labels = [m.strftime("%Y-%m") for m in all_months]
-    # sprint_values = [sprint_avg.get(m, None) for m in all_months]
-    # base_running_values = [base_running_avg.get(m, None) for m in all_months]
-
-    # # 50m走の月別平均
-    # sprint_data = (
-    #     Measurement.objects.annotate(month=TruncMonth("date"))
-    #     .values("month")
-    #     .annotate(avg_sprint=Avg("sprint_50m"))
-    #     .order_by("month")
-    # )
-    # sprint_labels = [entry["month"].strftime("%Y-%m") for entry in sprint_data]
-    # sprint_values = [round(entry["avg_sprint"], 2) for entry in sprint_data]
-
-    # base_running_data = (
-    #     Measurement.objects.annotate(month=TruncMonth("date"))
-    #     .values("month")
-    #     .annotate(base_running=Avg("base_running"))
-    #     .order_by("month")
-    # )
-    # base_running_labels = [
-    #     entry["month"].strftime("%Y-%m") for entry in base_running_data
-    # ]
-    # base_running_values = [
-    #     round(entry["base_running"], 2) for entry in base_running_data
-    # ]
-
     # 球速の平均・最大・最小
     ball_stats = Measurement.objects.aggregate(
         avg_speed=Avg("straight_ball_speed"),

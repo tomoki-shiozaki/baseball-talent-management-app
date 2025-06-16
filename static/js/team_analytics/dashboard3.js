@@ -3,131 +3,76 @@ const sprint_values = JSON.parse(document.getElementById('sprint-values').textCo
 const base_running_values = JSON.parse(document.getElementById('base-running-values').textContent);
 const long_throw_values = JSON.parse(document.getElementById('long-throw-values').textContent);
 
+// グラフ生成関数
+function createLineChart(canvasId, label, data, borderColor, backgroundColor, yAxisTitle) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    return new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: label,
+                data: data,
+                borderColor: borderColor,
+                backgroundColor: backgroundColor,
+                fill: true,
+                tension: 0,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+            }],
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: yAxisTitle,
+                    },
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: '年月',
+                    },
+                },
+            },
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                },
+            },
+        },
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
-    const sprintCtx = document.getElementById('sprintChart').getContext('2d');
-    const sprintChart = new Chart(sprintCtx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: '50m走平均タイム（秒）',
-                data: sprint_values,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                fill: true,
-                tension: 0,
-                pointRadius: 5,
-                pointHoverRadius: 7,
-            }],
-        },
+    createLineChart(
+        'sprintChart',
+        '50m走平均タイム（秒）',
+        sprint_values,
+        'rgba(75, 192, 192, 1)',
+        'rgba(75, 192, 192, 0.2)',
+        '秒'
+    );
 
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    title: {
-                        display: true,
-                        text: '秒'
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: '年月'
-                    }
-                }
-            },
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                }
-            }
-        }
-    });
-    const baseRunningCtx = document.getElementById('baseRunningChart').getContext('2d');
-    const baseRunningChart = new Chart(baseRunningCtx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'ベースランニング平均タイム（秒）',
-                data: base_running_values,
-                borderColor: 'rgba(255, 99, 132, 1)',
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                fill: true,
-                tension: 0,
-                pointRadius: 5,
-                pointHoverRadius: 7,
-            }],
-        },
+    createLineChart(
+        'baseRunningChart',
+        'ベースランニング平均タイム（秒）',
+        base_running_values,
+        'rgba(255, 99, 132, 1)',
+        'rgba(255, 99, 132, 0.2)',
+        '秒'
+    );
 
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    title: {
-                        display: true,
-                        text: '秒'
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: '年月'
-                    }
-                }
-            },
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                }
-            }
-        }
-    });
-    const longThrowCtx = document.getElementById('longThrowChart').getContext('2d');
-    const longThrowChart = new Chart(longThrowCtx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: '遠投平均距離（m）',
-                data: long_throw_values,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                fill: true,
-                tension: 0,
-                pointRadius: 5,
-                pointHoverRadius: 7,
-            }],
-        },
-
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    title: {
-                        display: true,
-                        text: '秒'
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: '年月'
-                    }
-                }
-            },
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                }
-            }
-        }
-    });
+    createLineChart(
+        'longThrowChart',
+        '遠投平均距離（m）',
+        long_throw_values,
+        'rgba(54, 162, 235, 1)',
+        'rgba(54, 162, 235, 0.2)',
+        'メートル'
+    );
 });
