@@ -10,11 +10,11 @@
 
 {% block content %}
 
-{{ sprint_labels|json_script:"sprint-labels" }}
-{{ sprint_values|json_script:"sprint-values" }}
+{{ labels|json_script:"labels" }}
 
-{{ base_running_labels|json_script:"base-running-labels" }}
+{{ sprint_values|json_script:"sprint-values" }}
 {{ base_running_values|json_script:"base-running-values" }}
+{{ long_throw_values|json_script:"long-throw-values" }}
 
 {{ ball_stats|json_script:"ball-stats" }}
 
@@ -44,8 +44,8 @@
 
     <!-- 肩力セクション -->
     <section class="dashboard-card">
-        <h2>🤾 肩力</h2>
-        <canvas id="throwingChart"></canvas>
+        <h2>🤾 肩力（遠投）</h2>
+        <canvas id="longThrowChart"></canvas>
         <p>
             ・遠投 平均：{{ summary.avg_long_throw|floatformat:2 }} m<br>
             ・ストレート球速 平均：{{ summary.avg_straight_ball_speed|floatformat:2 }} m
