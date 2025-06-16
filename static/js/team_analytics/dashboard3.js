@@ -71,6 +71,46 @@ document.addEventListener('DOMContentLoaded', function () {
         measurement_values["遠投"],
         'rgba(54, 162, 235, 1)',
         'rgba(54, 162, 235, 0.2)',
-        'メートル'
+        'm'
+    );
+    createLineChart(
+        'straightBallSpeedChart',
+        'ストレート球速（km/h）',
+        measurement_values["ストレート球速"],
+        'rgba(153, 102, 255, 1)',
+        'rgba(153, 102, 255, 0.2)',
+        'km/h'
+    );
+    createLineChart(
+        'hitBallSpeedChart',
+        '打球速度（km/h）',
+        measurement_values["打球速度"],
+        'rgba(255, 159, 64, 1)',
+        'rgba(255, 159, 64, 0.2)',
+        'km/h'
+    );
+    createLineChart(
+        'swingSpeedChart',
+        'スイング速度（km/h）',
+        measurement_values["スイング速度"],
+        'rgba(201, 203, 207, 1)',
+        'rgba(201, 203, 207, 0.2)',
+        'km/h'
+    );
+    createLineChart(
+        'benchPressChart',
+        'ベンチプレス（kg）',
+        measurement_values["ベンチプレス"],
+        'rgba(255, 193, 7, 1)',
+        'rgba(255, 193, 7, 0.2)', 
+        'kg'
+    );
+    createLineChart(
+        'squatChart',
+        'スクワット（kg）',
+        measurement_values["スクワット"],
+        'rgba(100, 149, 237, 1)',
+        'rgba(100, 149, 237, 0.2)',
+        'kg'
     );
 });

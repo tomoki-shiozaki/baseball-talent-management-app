@@ -99,6 +99,11 @@ def dashboard3(request):
         "50m走": "sprint_50m",
         "ベースラン": "base_running",
         "遠投": "long_throw",
+        "ストレート球速": "straight_ball_speed",
+        "打球速度": "hit_ball_speed",
+        "スイング速度": "swing_speed",
+        "ベンチプレス": "bench_press",
+        "スクワット": "squat",
     }
 
     # 2. クエリで全ての必要フィールドを取得
