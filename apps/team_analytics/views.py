@@ -103,7 +103,8 @@ def dashboard3(request):
 
     # 2. クエリで全ての必要フィールドを取得
     qs = (
-        Measurement.objects.annotate(month=TruncMonth("date"))
+        Measurement.objects.filter(status="coach_approved")
+        .annotate(month=TruncMonth("date"))
         .values("month", *event_fields.values())
         .order_by("month")
     )
