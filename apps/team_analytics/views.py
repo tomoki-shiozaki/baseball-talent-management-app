@@ -89,3 +89,44 @@ def hitting_detail(request):
 
 def strength_detail(request):
     return render(request, "dashboard/strength_detail.html")
+
+
+def dashboard3(request):
+    # 50m走の月別平均
+    sprint_data = (
+        Measurement.objects.annotate(month=TruncMonth("date"))
+        .values("month")
+        .annotate(avg_sprint=Avg("sprint_50m"))
+        .order_by("month")
+    )
+    sprint_labels = [entry["month"].strftime("%Y-%m") for entry in sprint_data]
+    sprint_values = [round(entry["avg_sprint"], 2) for entry in sprint_data]
+
+    base_running_data = (
+        Measurement.objects.annotate(month=TruncMonth("date"))
+        .values("month")
+        .annotate(base_running=Avg("base_running"))
+        .order_by("month")
+    )
+    base_running_labels = [
+        entry["month"].strftime("%Y-%m") for entry in base_running_data
+    ]
+    base_running_values = [
+        round(entry["base_running"], 2) for entry in base_running_data
+    ]
+
+    # 球速の平均・最大・最小
+    ball_stats = Measurement.objects.aggregate(
+        avg_speed=Avg("straight_ball_speed"),
+        max_speed=Max("straight_ball_speed"),
+        min_speed=Min("straight_ball_speed"),
+    )
+
+    context = {
+        "sprint_labels": sprint_labels,
+        "sprint_values": sprint_values,
+        "base_running_labels": base_running_labels,
+        "base_running_values": base_running_values,
+        "ball_stats": ball_stats,
+    }
+    return render(request, "team_analytics/dashboard3.html", context)

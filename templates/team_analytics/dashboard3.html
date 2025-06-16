@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}チーム分析ダッシュボード{% endblock title %}
+
+{% block extra_css %}
+<!-- チーム分析のダッシュボード専用のCSSを読み込む -->
+<link href="{% static 'css/team_analytics/dashboard3.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+{{ sprint_labels|json_script:"sprint-labels" }}
+{{ sprint_values|json_script:"sprint-values" }}
+
+{{ base_running_labels|json_script:"base-running-labels" }}
+{{ base_running_values|json_script:"base-running-values" }}
+
+{{ ball_stats|json_script:"ball-stats" }}
+
+<h1>チーム分析ダッシュボード</h1>
+
+<div class="dashboard-grid">
+
+    <!-- 走力セクション -->
+    <section class="dashboard-card">
+        <h2>🏃‍♂️ 走力（50m走）</h2>
+        <canvas id="sprintChart"></canvas>
+        <p>
+            ・50m走 平均：{{ summary.avg_sprint_50m|floatformat:2 }} 秒<br>
+            ・ベースランニング 平均：{{ summary.avg_base_running|floatformat:2 }} 秒
+        </p>
+        <a href="{% url 'team_analytics:sprint_detail' %}">▶ 詳細を見る</a>
+    </section>
+    <section class="dashboard-card">
+        <h2>🏃‍♂️ 走力（ベースランニング）</h2>
+        <canvas id="baseRunningChart"></canvas>
+        <p>
+            ・50m走 平均：{{ summary.avg_sprint_50m|floatformat:2 }} 秒<br>
+            ・ベースランニング 平均：{{ summary.avg_base_running|floatformat:2 }} 秒
+        </p>
+        <a href="{% url 'team_analytics:sprint_detail' %}">▶ 詳細を見る</a>
+    </section>
+
+    <!-- 肩力セクション -->
+    <section class="dashboard-card">
+        <h2>🤾 肩力</h2>
+        <canvas id="throwingChart"></canvas>
+        <p>
+            ・遠投 平均：{{ summary.avg_long_throw|floatformat:2 }} m<br>
+            ・ストレート球速 平均：{{ summary.avg_straight_ball_speed|floatformat:2 }} m
+        </p>
+        <a href="{% url 'team_analytics:sprint_detail' %}">▶ 詳細を見る</a>
+    </section>
+
+    <!-- 打力セクション -->
+    <section class="dashboard-card">
+        <h2>⚾ 打力</h2>
+        <canvas id="battingChart"></canvas>
+        <p>
+            ・打球速度 平均：{{ summary.avg_hit_ball_speed|floatformat:2 }} km/h<br>
+            ・スイング速度 平均：{{ summary.avg_swing_speed|floatformat:2 }} km/h
+        </p>
+        <a href="{% url 'team_analytics:hitting_detail' %}">▶ 詳細を見る</a>
+    </section>
+
+    <!-- 筋力セクション -->
+    <section class="dashboard-card">
+        <h2>💪 筋力</h2>
+        <canvas id="strengthChart"></canvas>
+        <p>
+            ・ベンチプレス 平均：{{ summary.avg_bench_press|floatformat:2 }} kg<br>
+            ・スクワット 平均：{{ summary.avg_squat|floatformat:2 }} kg
+        </p>
+        <a href="{% url 'team_analytics:strength_detail' %}">▶ 詳細を見る</a>
+    </section>
+
+</div>
+
+<div>
+    <h2>月別平均タイム推移</h2>
+    <canvas id="sprintChart" width="800" height="400"></canvas>
+</div>
+
+<div>
+    <h2>球速の統計</h2>
+    <div class="card">
+        <h3>平均球速</h3>
+        <p>{{ ball_stats.avg_speed|floatformat:1 }} km/h</p>
+    </div>
+    <div class="card">
+        <h3>最大球速</h3>
+        <p>{{ ball_stats.max_speed }} km/h</p>
+    </div>
+    <div class="card">
+        <h3>最小球速</h3>
+        <p>{{ ball_stats.min_speed }} km/h</p>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_js %}
+<!-- JavaScript-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+<script src="{% static 'js/team_analytics/dashboard3.js' %}"></script>
+{% endblock %}
