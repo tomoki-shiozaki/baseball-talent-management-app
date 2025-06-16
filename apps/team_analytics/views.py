@@ -53,9 +53,15 @@ def sprint_50m_monthly_avg(request):
 
 
 def dashboard_overview(request):
-    approved_data = Measurement.objects.filter(status="coach_approved")
+    # 「coach_approved」な測定データの中で最新の日付を取得
+    latest_date = Measurement.objects.filter(
+        status="coach_approved", player__status="active"
+    ).aggregate(latest=Max("date"))["latest"]
 
-    summary = approved_data.aggregate(
+    # その最新の日付の測定データを対象に集計
+    summary = Measurement.objects.filter(
+        status="coach_approved", date=latest_date, player__status="active"
+    ).aggregate(
         avg_sprint_50m=Avg("sprint_50m"),
         avg_base_running=Avg("base_running"),
         avg_long_throw=Avg("long_throw"),
@@ -67,7 +73,9 @@ def dashboard_overview(request):
     )
 
     return render(
-        request, "team_analytics/dashboard_overview.html", {"summary": summary}
+        request,
+        "team_analytics/dashboard_overview.html",
+        {"summary": summary, "latest_date": latest_date},
     )
 
 
