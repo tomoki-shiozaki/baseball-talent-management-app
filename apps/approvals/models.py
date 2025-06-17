@@ -50,7 +50,6 @@ class MeasurementApproval(models.Model):
     )
     comment = models.TextField(
         blank=True,
-        null=True,
         verbose_name="コメント",
     )
 
