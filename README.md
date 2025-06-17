@@ -8,8 +8,11 @@
 ## 🔐 動作確認用アカウント情報（必須）
 | ロール | ユーザー名 | パスワード |
 |--------|------------|------------|
+| マネージャー | manager1 | dev_manager1_123 | 
 | 部員 | player1  | dev_player1_123   |
+| 部員 | player2 | dev_player2_123 | 
 | コーチ | coach1 | dev_coach1_123 |
+| 監督 | director | dev_director_123 | 
 | (管理者) | superuser | dev_superuser_123 |
 - superuserはDjango管理サイト(`https://quest-1-main.onrender.com/admin/`)の管理者アカウントです
 
