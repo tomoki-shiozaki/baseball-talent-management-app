@@ -41,12 +41,15 @@ class HomePageView(TemplateView):
                 # コーチが承認すべき未承認記録（部員が承認済だがコーチ未承認）
                 pending_count = (
                     Measurement.objects.filter(
-                        approvals__step="self", approvals__status="approved"
+                        recreated_at__isnull=True,
+                        approvals__step="self",
+                        approvals__status="approved",
                     )
                     .exclude(
                         approvals__step="coach",
                         approvals__status__in=["approved", "rejected"],
                     )
+                    .distinct()
                     .count()
                 )
                 context["coach_pending_count"] = pending_count

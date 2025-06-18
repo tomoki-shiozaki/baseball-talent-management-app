@@ -184,10 +184,11 @@ class CoachPendingApprovalListView(LoginRequiredMixin, UserPassesTestMixin, List
 
         return (
             Measurement.objects.filter(
-                approvals__step="self", approvals__status="approved"
+                recreated_at__isnull=True,
+                approvals__step="self",
+                approvals__status="approved",
             )
             .exclude(
-                approvals__approver=user,
                 approvals__step="coach",
                 approvals__status__in=["approved", "rejected"],
             )
