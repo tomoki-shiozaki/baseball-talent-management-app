@@ -4,12 +4,29 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<h1>部員リスト</h1>
-<ul>
-    {% for player in players %}
-    <li>
-        {{ player|display_name }} - <a href="{% url 'measurements:player_measurement_list' player.id %}">記録を見る</a>
-    </li>
-    {% endfor %}
-</ul>
+<div class="container mt-4">
+    <h2 class="mb-4">部員一覧</h2>
+
+    {% if players %}
+    <ul class="list-group">
+        {% for player in players %}
+        <li class="list-group-item">
+            <div class="d-flex flex-wrap align-items-center">
+                <div>
+                    <strong>{{ player|display_name }}</strong>
+                    <span class="text-muted">（{{ player.grade }}年）</span>
+                </div>
+                <a href="{% url 'measurements:player_measurement_list' player.id %}" class="btn btn-outline-primary btn-sm ms-3">
+                    記録を見る
+                </a>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        部員が見つかりません。
+    </div>
+    {% endif %}
+</div>
 {% endblock content %}
