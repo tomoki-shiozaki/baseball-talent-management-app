@@ -440,13 +440,17 @@ class TestCoachPendingApprovalListView(TestCase):
     def test_only_unapproved_measurements_shown(self):
         self.client.login(username="coach", password="pass1234")
 
-        # 承認済みの承認履歴を作る
-        self.approval = MeasurementApproval.objects.create(
-            measurement=self.measurement,
-            approver=self.coach,
-            role="coach",
-            step="coach",
-            status="approved",
+        # コーチがフォームから承認する
+        approval_url = reverse(
+            "approvals:coach_approve",
+            kwargs={"measurement_id": self.measurement.id},
+        )
+        response = self.client.post(
+            approval_url,
+            {
+                "status": "approved",
+                "comment": "Looks good",
+            },
         )
 
         response = self.client.get(self.url)
