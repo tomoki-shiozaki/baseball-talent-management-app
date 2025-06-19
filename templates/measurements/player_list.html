@@ -3,15 +3,29 @@
 {% load user_extras %}
 
 {% block content %}
-  <h2>部員一覧</h2>
-  <ul>
+<div class="container mt-4">
+  <h2 class="mb-4">部員一覧</h2>
+
+  {% if players %}
+  <ul class="list-group">
     {% for player in players %}
-      <li>
-        {{ player|display_name }}（{{ player.grade }}年）
-        - <a href="{% url 'measurements:new' player.id %}">記録を登録</a>
-      </li>
-    {% empty %}
-      <li>部員が見つかりません。</li>
+    <li class="list-group-item">
+      <div class="d-flex flex-wrap align-items-center">
+        <div>
+          <strong>{{ player|display_name }}</strong>
+          <span class="text-muted">（{{ player.grade }}年）</span>
+        </div>
+        <a href="{% url 'measurements:new' player.id %}" class="btn btn-outline-primary btn-sm ms-3">
+          記録を登録
+        </a>
+      </div>
+    </li>
     {% endfor %}
   </ul>
+  {% else %}
+  <div class="alert alert-info" role="alert">
+    部員が見つかりません。
+  </div>
+  {% endif %}
+</div>
 {% endblock %}
