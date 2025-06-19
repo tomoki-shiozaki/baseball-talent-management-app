@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load user_extras %}
+{% load crispy_forms_tags %}
 
 {% block title %}コーチによる測定記録の承認{% endblock %}
 {% block content %}
@@ -36,7 +37,7 @@
 </table>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form|crispy }}
     <button type="submit" class="btn btn-primary">送信</button>
 </form>
 {% endblock %}

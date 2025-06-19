@@ -118,15 +118,8 @@ class PlayerPendingApprovalListView(LoginRequiredMixin, UserPassesTestMixin, Lis
         user = self.request.user
 
         # 承認履歴に「自分による承認（step=self）」が「済み（承認済または否認）」でないもの
-        return (
-            Measurement.objects.filter(recreated_at__isnull=True, player=user)
-            .exclude(
-                approvals__approver=user,
-                approvals__step="self",
-                approvals__status__in=["approved", "rejected"],
-            )
-            .select_related("player")
-            .distinct()
+        return Measurement.objects.filter(status="pending", player=user).select_related(
+            "player"
         )
 
 
@@ -144,6 +137,11 @@ class PlayerApprovalCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateVi
         # ログインユーザーが対象のプレイヤーであることを確認
         if self.measurement.player != request.user:
             return self.handle_no_permission()  # 403 Forbiddenを返す
+
+        # すでに承認済み or 否認済みならフォームを表示させない
+        if self.measurement.status != "pending":
+            return HttpResponseForbidden("この測定はすでに承認処理済みです。")
+
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
