@@ -57,11 +57,13 @@ class DashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         all_months = sorted(
             set().union(*[avg.keys() for avg in measurement_avg.values()])
         )
-        labels = [m.strftime("%Y-%m") for m in all_months]
+        # 前年の同時期までのデータを取得する。7回分あればよい。
+        recent_months = sorted(all_months)[-7:]
+        labels = [m.strftime("%Y-%m") for m in recent_months]
 
         # 6. 種目ごとの値リストを整形
         measurement_values = {
-            label: [avg.get(m, None) for m in all_months]
+            label: [avg.get(m, None) for m in recent_months]
             for label, avg in measurement_avg.items()
         }
 
