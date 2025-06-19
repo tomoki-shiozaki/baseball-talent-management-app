@@ -21,7 +21,18 @@ class TeamMemberListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return self.request.user.is_coach or self.request.user.is_director
 
     def get_queryset(self):
-        return User.objects.filter(role__in=["player", "manager"]).order_by("id")
+        status_filter = self.request.GET.get("status", "active")  # デフォルトは在籍中
+        role_filter = self.request.GET.get("role", "player")  # デフォルトは部員
+        qs = User.objects.filter(status=status_filter, role=role_filter)
+
+        return qs.order_by("grade")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # 現在のフィルター値をテンプレートに渡す（ページネーションのリンク用など）
+        context["current_role"] = self.request.GET.get("role", "player")
+        context["current_status"] = self.request.GET.get("status", "active")
+        return context
 
 
 class TeamMemberCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
