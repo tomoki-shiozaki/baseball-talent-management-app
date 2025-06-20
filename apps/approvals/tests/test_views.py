@@ -38,7 +38,6 @@ class TestRejectedApprovalListView(TestCase):
         self.approval = MeasurementApproval.objects.create(
             measurement=self.measurement,
             approver=self.player,
-            role="player",
             step="self",
             status="rejected",
             comment="データ不備",
@@ -105,7 +104,6 @@ class TestRejectedApprovalDetailView(TestCase):
         self.approval = MeasurementApproval.objects.create(
             measurement=self.measurement,
             approver=self.player,
-            role="player",
             step="self",
             status="rejected",
             comment="データ不備",
@@ -164,7 +162,6 @@ class TestMeasurementRecreateView(TestCase):
         self.approval = MeasurementApproval.objects.create(
             measurement=self.original,
             approver=self.player,
-            role="player",
             step="self",
             status="rejected",
         )
@@ -362,7 +359,6 @@ class TestPlayerApprovalCreateView(TestCase):
         approval = MeasurementApproval.objects.get(measurement=self.measurement)
         self.assertEqual(approval.status, "approved")
         self.assertEqual(approval.approver, self.player)
-        self.assertEqual(approval.role, "player")
         self.assertEqual(approval.step, "self")
         self.assertEqual(self.measurement.status, "player_approved")
 
@@ -419,7 +415,6 @@ class TestCoachPendingApprovalListView(TestCase):
         MeasurementApproval.objects.create(
             measurement=self.measurement,
             approver=self.player,
-            role="player",
             step="self",
             status="approved",
         )
@@ -539,7 +534,6 @@ class TestCoachApprovalCreateView(TestCase):
         approval = MeasurementApproval.objects.get(measurement=self.measurement)
         self.assertEqual(approval.status, "approved")
         self.assertEqual(approval.approver, self.coach)
-        self.assertEqual(approval.role, "coach")
         self.assertEqual(approval.step, "coach")
         self.assertEqual(self.measurement.status, "coach_approved")
 

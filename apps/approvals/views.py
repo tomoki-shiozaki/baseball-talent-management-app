@@ -147,7 +147,6 @@ class PlayerApprovalCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateVi
     def form_valid(self, form):
         form.instance.measurement = self.measurement
         form.instance.approver = self.request.user
-        form.instance.role = "player"
         form.instance.step = "self"
 
         response = super().form_valid(form)
@@ -207,7 +206,6 @@ class CoachApprovalCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateVie
     def form_valid(self, form):
         form.instance.measurement = self.measurement
         form.instance.approver = self.request.user
-        form.instance.role = "coach"
         form.instance.step = "coach"
 
         response = super().form_valid(form)

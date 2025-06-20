@@ -40,7 +40,6 @@ class TestMeasurementApprovalModel(TestCase):
         approval = MeasurementApproval.objects.create(
             measurement=self.measurement,
             approver=self.player,
-            role="player",
             step="self",
             status="approved",
             comment="問題ありません",
@@ -48,7 +47,6 @@ class TestMeasurementApprovalModel(TestCase):
 
         self.assertEqual(approval.measurement, self.measurement)
         self.assertEqual(approval.approver, self.player)
-        self.assertEqual(approval.role, "player")
         self.assertEqual(approval.step, "self")
         self.assertEqual(approval.status, "approved")
         self.assertEqual(approval.comment, "問題ありません")
@@ -60,7 +58,6 @@ class TestMeasurementApprovalModel(TestCase):
         MeasurementApproval.objects.create(
             measurement=self.measurement,
             approver=self.player,
-            role="player",
             step="self",
             status="approved",
         )
@@ -69,7 +66,6 @@ class TestMeasurementApprovalModel(TestCase):
             MeasurementApproval.objects.create(
                 measurement=self.measurement,
                 approver=self.player,
-                role="player",
                 step="self",
                 status="rejected",
             )
@@ -78,7 +74,6 @@ class TestMeasurementApprovalModel(TestCase):
         approval = MeasurementApproval.objects.create(
             measurement=self.measurement,
             approver=self.coach,
-            role="coach",
             step="coach",
             status="rejected",
             comment="問題があります",
