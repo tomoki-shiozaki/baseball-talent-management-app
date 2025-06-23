@@ -25,7 +25,7 @@ class TeamMemberListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         role_filter = self.request.GET.get("role", "player")  # デフォルトは部員
         qs = User.objects.filter(status=status_filter, role=role_filter)
 
-        return qs.order_by("grade")
+        return qs.order_by("grade", "last_name", "first_name")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
