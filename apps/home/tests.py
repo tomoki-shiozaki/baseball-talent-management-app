@@ -86,7 +86,6 @@ class TestHomePage(TestCase):
         MeasurementApproval.objects.create(
             measurement=m,
             approver=self.player,
-            role="player",
             step="self",
             status="approved",
         )

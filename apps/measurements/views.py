@@ -59,7 +59,11 @@ class PlayerListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return self.request.user.is_manager
 
     def get_queryset(self):
-        return get_user_model().objects.filter(role="player", status="active")
+        return (
+            get_user_model()
+            .objects.filter(role="player", status="active")
+            .order_by("grade", "last_name")
+        )
 
 
 # 部員用
@@ -95,9 +99,8 @@ class MyMeasurementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        full_name = user.get_full_name()
-        # ログインユーザーの姓名をコンテキストに追加
-        context["player_name"] = full_name if full_name else user.username
+
+        context["player"] = user
         context["current_order"] = self.request.GET.get("order", "desc")
         context["current_status"] = self.request.GET.get("status", "approved")
         return context
@@ -150,9 +153,8 @@ class PlayerMeasurementListView(LoginRequiredMixin, UserPassesTestMixin, ListVie
         context = super().get_context_data(**kwargs)
         player_id = self.kwargs.get("player_id")
         player = get_object_or_404(get_user_model(), id=player_id)
-        full_name = player.get_full_name()
-        # ログインユーザーのユーザー名をコンテキストに追加
-        context["player_name"] = full_name if full_name else player.username
+
+        context["player"] = player
         context["current_order"] = self.request.GET.get("order", "desc")
         context["current_status"] = self.request.GET.get("status", "approved")
         return context

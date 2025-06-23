@@ -31,12 +31,12 @@ class TestTeamMemberListView(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
 
-    def test_queryset_filters_only_players_and_managers(self):
+    def test_queryset_filters_only_players(self):
         self.client.login(username="director", password="pass1234")
         response = self.client.get(self.url)
         users = response.context["object_list"]
         self.assertIn(self.player, users)
-        self.assertIn(self.manager, users)
+        self.assertNotIn(self.manager, users)
 
 
 class TestTeamMemberCreateView(TestCase):

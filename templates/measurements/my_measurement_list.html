@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 
-{% load measurements_querystring %}
+{% load user_extras %}
+{% load querystring %}
 
 {% block title %}測定結果{% endblock title %}
 
 {% block content %}
-<h2>{{ player_name }} さんの測定記録一覧</h2>
+<h2>{{ player|display_name }} さんの測定記録一覧</h2>
 
 <p>
     表示:

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "apps.members.apps.MembersConfig",
     "apps.approvals.apps.ApprovalsConfig",
     "apps.common.apps.CommonConfig",
+    "apps.team_analytics.apps.TeamAnalyticsConfig",
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

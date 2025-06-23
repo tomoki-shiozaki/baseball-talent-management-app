@@ -38,7 +38,6 @@ class TestRejectedApprovalListView(TestCase):
         self.approval = MeasurementApproval.objects.create(
             measurement=self.measurement,
             approver=self.player,
-            role="player",
             step="self",
             status="rejected",
             comment="データ不備",
@@ -105,7 +104,6 @@ class TestRejectedApprovalDetailView(TestCase):
         self.approval = MeasurementApproval.objects.create(
             measurement=self.measurement,
             approver=self.player,
-            role="player",
             step="self",
             status="rejected",
             comment="データ不備",
@@ -164,7 +162,6 @@ class TestMeasurementRecreateView(TestCase):
         self.approval = MeasurementApproval.objects.create(
             measurement=self.original,
             approver=self.player,
-            role="player",
             step="self",
             status="rejected",
         )
@@ -264,13 +261,17 @@ class TestPlayerPendingApprovalListView(TestCase):
     def test_only_unapproved_measurements_shown(self):
         self.client.login(username="player", password="pass1234")
 
-        # 承認済みの承認履歴を作る
-        self.approval = MeasurementApproval.objects.create(
-            measurement=self.measurement,
-            approver=self.player,
-            role="player",
-            step="self",
-            status="approved",
+        # コーチがフォームから承認する
+        approval_url = reverse(
+            "approvals:player_approve",
+            kwargs={"measurement_id": self.measurement.id},
+        )
+        response = self.client.post(
+            approval_url,
+            {
+                "status": "approved",
+                "comment": "Looks good",
+            },
         )
 
         response = self.client.get(self.url)
@@ -358,7 +359,6 @@ class TestPlayerApprovalCreateView(TestCase):
         approval = MeasurementApproval.objects.get(measurement=self.measurement)
         self.assertEqual(approval.status, "approved")
         self.assertEqual(approval.approver, self.player)
-        self.assertEqual(approval.role, "player")
         self.assertEqual(approval.step, "self")
         self.assertEqual(self.measurement.status, "player_approved")
 
@@ -415,7 +415,6 @@ class TestCoachPendingApprovalListView(TestCase):
         MeasurementApproval.objects.create(
             measurement=self.measurement,
             approver=self.player,
-            role="player",
             step="self",
             status="approved",
         )
@@ -440,13 +439,17 @@ class TestCoachPendingApprovalListView(TestCase):
     def test_only_unapproved_measurements_shown(self):
         self.client.login(username="coach", password="pass1234")
 
-        # 承認済みの承認履歴を作る
-        self.approval = MeasurementApproval.objects.create(
-            measurement=self.measurement,
-            approver=self.coach,
-            role="coach",
-            step="coach",
-            status="approved",
+        # コーチがフォームから承認する
+        approval_url = reverse(
+            "approvals:coach_approve",
+            kwargs={"measurement_id": self.measurement.id},
+        )
+        response = self.client.post(
+            approval_url,
+            {
+                "status": "approved",
+                "comment": "Looks good",
+            },
         )
 
         response = self.client.get(self.url)
@@ -531,7 +534,6 @@ class TestCoachApprovalCreateView(TestCase):
         approval = MeasurementApproval.objects.get(measurement=self.measurement)
         self.assertEqual(approval.status, "approved")
         self.assertEqual(approval.approver, self.coach)
-        self.assertEqual(approval.role, "coach")
         self.assertEqual(approval.step, "coach")
         self.assertEqual(self.measurement.status, "coach_approved")
 

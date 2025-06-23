@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
+from django.http import HttpResponseForbidden
 
 from apps.approvals.models import MeasurementApproval
 from apps.measurements.models import Measurement
@@ -117,15 +118,8 @@ class PlayerPendingApprovalListView(LoginRequiredMixin, UserPassesTestMixin, Lis
         user = self.request.user
 
         # 承認履歴に「自分による承認（step=self）」が「済み（承認済または否認）」でないもの
-        return (
-            Measurement.objects.filter(player=user)
-            .exclude(
-                approvals__approver=user,
-                approvals__step="self",
-                approvals__status__in=["approved", "rejected"],
-            )
-            .select_related("player")
-            .distinct()
+        return Measurement.objects.filter(status="pending", player=user).select_related(
+            "player"
         )
 
 
@@ -143,12 +137,16 @@ class PlayerApprovalCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateVi
         # ログインユーザーが対象のプレイヤーであることを確認
         if self.measurement.player != request.user:
             return self.handle_no_permission()  # 403 Forbiddenを返す
+
+        # すでに承認済み or 否認済みならフォームを表示させない
+        if self.measurement.status != "pending":
+            return HttpResponseForbidden("この測定はすでに承認処理済みです。")
+
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         form.instance.measurement = self.measurement
         form.instance.approver = self.request.user
-        form.instance.role = "player"
         form.instance.step = "self"
 
         response = super().form_valid(form)
@@ -180,20 +178,9 @@ class CoachPendingApprovalListView(LoginRequiredMixin, UserPassesTestMixin, List
         return self.request.user.is_coach
 
     def get_queryset(self):
-        user = self.request.user
-
-        return (
-            Measurement.objects.filter(
-                approvals__step="self", approvals__status="approved"
-            )
-            .exclude(
-                approvals__approver=user,
-                approvals__step="coach",
-                approvals__status__in=["approved", "rejected"],
-            )
-            .select_related("player")
-            .distinct()
-        )
+        return Measurement.objects.filter(
+            status="player_approved",
+        ).select_related("player")
 
 
 class CoachApprovalCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
@@ -206,12 +193,19 @@ class CoachApprovalCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateVie
 
     def dispatch(self, request, *args, **kwargs):
         self.measurement = get_object_or_404(Measurement, id=kwargs["measurement_id"])
+
+        # すでに承認済み or 否認済みならフォームを表示させない
+        if self.measurement.status in ["coach_approved", "rejected"]:
+            return HttpResponseForbidden("この測定はすでに承認処理済みです。")
+
+        elif self.measurement.status == "pending":
+            return HttpResponseForbidden("この測定はまだ部員の承認がされていません")
+
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         form.instance.measurement = self.measurement
         form.instance.approver = self.request.user
-        form.instance.role = "coach"
         form.instance.step = "coach"
 
         response = super().form_valid(form)

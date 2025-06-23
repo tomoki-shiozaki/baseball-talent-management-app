@@ -25,4 +25,5 @@ urlpatterns = [
     path("measurements/", include("apps.measurements.urls")),
     path("members/", include("apps.members.urls")),
     path("approvals/", include("apps.approvals.urls")),
+    path("team-analytics/", include("apps.team_analytics.urls")),
 ]

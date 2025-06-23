@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}チーム分析ダッシュボード{% endblock title %}
+
+{% block extra_css %}
+<!-- チーム分析のダッシュボード専用のCSSを読み込む -->
+<link href="{% static 'css/team_analytics/dashboard.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+{{ labels|json_script:"labels" }}
+{{ measurement_values|json_script:"measurement-values" }}
+
+<h1>チーム分析ダッシュボード</h1>
+
+<div class="dashboard-grid">
+
+    <!-- 走力セクション -->
+    <section class="dashboard-card">
+        <h2>🏃‍♂️ 走力（50m走）</h2>
+        <canvas id="sprintChart"></canvas>
+    </section>
+    <section class="dashboard-card">
+        <h2>🏃‍♂️ 走力（ベースランニング）</h2>
+        <canvas id="baseRunningChart"></canvas>
+    </section>
+
+    <!-- 肩力セクション -->
+    <section class="dashboard-card">
+        <h2>🤾 肩力（遠投）</h2>
+        <canvas id="longThrowChart"></canvas>
+    </section>
+    <section class="dashboard-card">
+        <h2>🤾 肩力（ストレート球速）</h2>
+        <canvas id="straightBallSpeedChart"></canvas>
+    </section>
+
+    <!-- 打力セクション -->
+    <section class="dashboard-card">
+        <h2>⚾ 打力（打球速度）</h2>
+        <canvas id="hitBallSpeedChart"></canvas>
+    </section>
+    <section class="dashboard-card">
+        <h2>⚾ 打力（スイング速度）</h2>
+        <canvas id="swingSpeedChart"></canvas>
+    </section>
+
+    <!-- 筋力セクション -->
+    <section class="dashboard-card">
+        <h2>💪 筋力（ベンチプレス）</h2>
+        <canvas id="benchPressChart"></canvas>
+    </section>
+    <section class="dashboard-card">
+        <h2>💪 筋力（スクワット）</h2>
+        <canvas id="squatChart"></canvas>
+    </section>
+
+</div>
+
+{% endblock content %}
+
+{% block extra_js %}
+<!-- JavaScript-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+<script src="{% static 'js/team_analytics/dashboard.js' %}"></script>
+{% endblock %}

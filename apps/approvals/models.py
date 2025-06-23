@@ -28,12 +28,6 @@ class MeasurementApproval(models.Model):
         on_delete=models.CASCADE,
         verbose_name="承認者",
     )
-    # 承認した人のロール
-    role = models.CharField(
-        max_length=10,
-        choices=get_user_model().ROLE_CHOICES,
-        verbose_name="承認者の立場",
-    )
     step = models.CharField(
         max_length=10,
         choices=STEP_CHOICES,
@@ -50,9 +44,12 @@ class MeasurementApproval(models.Model):
     )
     comment = models.TextField(
         blank=True,
-        null=True,
         verbose_name="コメント",
     )
+
+    @property
+    def role(self):
+        return "player" if self.step == "self" else "coach"
 
     def __str__(self):
         return f"{self.measurement} by {self.approver.username} ({self.get_step_display()})"
@@ -62,7 +59,7 @@ class MeasurementApproval(models.Model):
         verbose_name_plural = "承認履歴"
         constraints = [
             models.UniqueConstraint(
-                fields=["measurement", "approver", "step"],
-                name="unique_approval_once",
+                fields=["measurement", "step"],
+                name="unique_step_approval_per_measurement",
             )
         ]

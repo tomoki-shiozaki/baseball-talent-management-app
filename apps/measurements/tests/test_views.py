@@ -200,7 +200,7 @@ class TestMyMeasurementListView(TestCase):
         self.client.login(username="player1", password="pass1234")
         response = self.client.get(self.url)
         context = response.context
-        self.assertEqual(context["player_name"], "太郎 山田")
+        self.assertEqual(context["player"], self.player)
         self.assertEqual(context["current_order"], "desc")
         self.assertEqual(context["current_status"], "approved")
 
@@ -340,6 +340,6 @@ class TestPlayerMeasurementListView(TestCase):
         self.client.login(username="coach", password="pass")
         response = self.client.get(self.url)
         context = response.context
-        self.assertEqual(context["player_name"], "太郎 山田")
+        self.assertEqual(context["player"], self.player)
         self.assertEqual(context["current_order"], "desc")
         self.assertEqual(context["current_status"], "approved")

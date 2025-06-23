@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load user_extras %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <h2>{{ user|display_name }} さんの測定記録の承認</h2>
@@ -35,7 +36,7 @@
 </table>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form|crispy }}
     <button type="submit" class="btn btn-primary">送信</button>
 </form>
 {% endblock %}

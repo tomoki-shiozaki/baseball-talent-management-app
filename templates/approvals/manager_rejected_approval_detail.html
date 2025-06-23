@@ -9,7 +9,7 @@
     <li class="list-group-item"><strong>部員名:</strong> {{ approval.measurement.player|display_name }}</li>
     <li class="list-group-item"><strong>測定日:</strong> {{ approval.measurement.date }}</li>
     <li class="list-group-item"><strong>ステップ:</strong> {{ approval.get_step_display }}</li>
-    <li class="list-group-item"><strong>否認者:</strong> {{ approval.approver|display_name }}（{{ approval.role }}）</li>
+    <li class="list-group-item"><strong>否認者:</strong> {{ approval.approver|display_name }}</li>
     <li class="list-group-item"><strong>否認日:</strong> {{ approval.created_at|date:"Y年m月d日 H:i" }}</li>
     <li class="list-group-item">
         <strong>コメント:</strong>

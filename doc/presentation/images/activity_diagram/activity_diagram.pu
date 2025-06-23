@@ -1,0 +1,23 @@
+@startuml activity_diagram
+skinparam defaultFontName "Noto Sans CJK JP"
+
+start
+
+repeat
+  :マネージャーが測定記録結果を入力\n承認フローが発行される;
+  :測定の対象部員に通知\n部員が記録を確認;
+
+  if (部員の承認?) then (はい)
+    :コーチに通知\nコーチが記録を確認;
+    if (コーチの承認?) then (はい)
+      :記録が確定;
+      stop
+    else (いいえ)
+      :マネージャーの再登録が必要;
+    endif
+  else (いいえ)
+    :マネージャーの再登録が必要;
+  endif
+repeat while (再登録の差し戻しがある)
+
+@enduml

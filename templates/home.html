@@ -49,6 +49,9 @@
         {% if user.is_coach or user.is_director %}
         <a class="btn btn-outline-secondary btn-lg mx-3 my-2" href="{% url 'measurements:member_list' %}">部員別測定記録閲覧</a>
         <a class="btn btn-warning btn-lg mx-3 my-2" href="{% url 'members:team_member_list' %}">部員管理</a>
+        <a class="btn btn-info btn-lg mx-3 my-2" href="{% url 'team_analytics:dashboard' %}">
+            チーム分析を見る
+        </a>
         {% endif %}
         </p>
     </div>
@@ -56,7 +59,7 @@
     <!-- ログイン前のトップ画面 -->
     <div class="text-center">
         <h2 class="h4 mb-4 fw-bold">アカウントをお持ちの方はこちらからログイン</h2>
-        <p class="text-muted">※アカウントは監督またはコーチから配布されます。</p>
+        <p class="text-muted">※マネージャー・部員のアカウントは監督またはコーチから配布されます。</p>
         <div class="lead mb-4">
             <a href="{% url 'login' %}" class="btn btn-dark btn-lg px-5 py-2 my-2">ログイン</a>
         </div>
