@@ -99,9 +99,8 @@ class MyMeasurementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        full_name = user.get_full_name()
-        # ログインユーザーの姓名をコンテキストに追加
-        context["player_name"] = full_name if full_name else user.username
+
+        context["player"] = user
         context["current_order"] = self.request.GET.get("order", "desc")
         context["current_status"] = self.request.GET.get("status", "approved")
         return context
