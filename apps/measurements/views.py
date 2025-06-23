@@ -59,7 +59,11 @@ class PlayerListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return self.request.user.is_manager
 
     def get_queryset(self):
-        return get_user_model().objects.filter(role="player", status="active")
+        return (
+            get_user_model()
+            .objects.filter(role="player", status="active")
+            .order_by("grade", "last_name")
+        )
 
 
 # 部員用
