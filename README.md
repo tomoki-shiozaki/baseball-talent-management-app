@@ -41,16 +41,16 @@
 
 - Renderから自動接続（`.env` 経由で `DATABASE_URL` を設定）
 
-## 🗃 ER図（データベース設計）
+## 📎 提出物一覧
 
-ER図は [こちらのドキュメントをご覧ください](doc/README.md)。
-
-## 📚 利用マニュアル
-
-アプリの利用方法や各ロール別の操作手順については、以下のマニュアルをご参照ください。  
-👉 [アプリケーションの利用マニュアル](doc/manual.md)
+- 🗃 [ER図（データベース設計）](doc/README.md)
+- 📚 [アプリケーションの利用マニュアル](doc/manual.md)
+- 🎤 プレゼンテーション資料（課題1・2、工夫点、感想を含む）
+  - 📄 [Markdown形式](doc/presentation/slides/presentation.md)
+  - 📄 [PDF形式](doc/presentation/slides/presentation.pdf)
 
 ## 📝 備考
 - アプリは**指定期日まで稼働**させ続けます。
 - 上記アカウントでログイン可能です。
 - 管理画面：`https://quest-1-main.onrender.com/admin/`
+  → `superuser` アカウントでログイン可能です（Django 標準の管理用インターフェース）
