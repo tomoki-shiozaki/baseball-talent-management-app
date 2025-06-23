@@ -1,0 +1,161 @@
+/* @theme custom */
+@import 'default';
+
+/* --------------------------------
+   カスタムテーマ: custom
+-------------------------------- */
+
+:root {
+  --fw: 1;
+  --gap: 1em;
+  --debug-border: 2px dashed #999;
+  --debug-bg: #f0f8ff;
+}
+
+/* ----- Flex レイアウト ----- */
+.flex {
+  display: flex;
+  gap: var(--gap);
+}
+
+.flex.sa {
+  justify-content: space-around;
+}
+
+.flex.sb {
+  justify-content: space-between;
+}
+
+.flex.center {
+  justify-content: center;
+}
+
+.flex.middle {
+  align-items: center;
+}
+
+.flex.wrap {
+  flex-wrap: wrap;
+}
+
+.flex.column {
+  flex-direction: column;
+}
+
+.flex.align-start {
+  align-items: flex-start;
+}
+
+.flex.align-end {
+  align-items: flex-end;
+}
+
+/* ----- 幅の制御 ----- */
+.fw>* {
+  flex: var(--fw);
+}
+
+.w1 {
+  flex: 1;
+}
+
+.w2 {
+  flex: 2;
+}
+
+.w3 {
+  flex: 3;
+}
+
+.w4 {
+  flex: 4;
+}
+
+.w5 {
+  flex: 5;
+}
+
+.w6 {
+  flex: 6;
+}
+
+.w7 {
+  flex: 7;
+}
+
+.w8 {
+  flex: 8;
+}
+
+.w9 {
+  flex: 9;
+}
+
+.w10 {
+  flex: 10;
+}
+
+.w11 {
+  flex: 11;
+}
+
+.w12 {
+  flex: 12;
+}
+
+/* ----- デバッグ用 ----- */
+.debug * {
+  border: var(--debug-border);
+  background-color: var(--debug-bg);
+}
+
+/* ----- その他ユーティリティ ----- */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.mt-1 {
+  margin-top: 0.5em;
+}
+
+.mb-1 {
+  margin-bottom: 0.5em;
+}
+
+.mt-2 {
+  margin-top: 1em;
+}
+
+.mb-2 {
+  margin-bottom: 1em;
+}
+
+.p-1 {
+  padding: 0.5em;
+}
+
+.p-2 {
+  padding: 1em;
+}
+
+.bg-light {
+  background-color: #f9f9f9;
+}
+
+.bg-dark {
+  background-color: #333;
+  color: white;
+}
+
+img.responsive {
+  max-width: 100%;
+  height: auto;
+}
