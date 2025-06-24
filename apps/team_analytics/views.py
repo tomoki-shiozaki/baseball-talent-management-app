@@ -87,7 +87,9 @@ class ComparisonEntryView(LoginRequiredMixin, UserPassesTestMixin, TemplateView)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["players"] = User.objects.filter(role="player", is_active=True)
+        context["players"] = User.objects.filter(
+            role="player", is_active=True
+        ).order_by("grade", "last_name", "first_name")
         return context
 
 
@@ -104,6 +106,9 @@ class PlayerComparisonView(LoginRequiredMixin, UserPassesTestMixin, TemplateView
         player_id = self.request.GET.get("player_id")
         player = get_object_or_404(User, pk=player_id, role="player", is_active=True)
         context["player"] = player
+        context["player_list"] = User.objects.filter(
+            role="player", is_active=True
+        ).order_by("grade", "last_name", "first_name")
 
         measurement_fields = {
             "50m走": "sprint_50m",

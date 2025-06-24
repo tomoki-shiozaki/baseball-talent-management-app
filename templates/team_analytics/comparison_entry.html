@@ -6,13 +6,23 @@
 
 {% block content %}
 <h1>個人との比較グラフ</h1>
+<hr>
 
-<p>比較対象とする部員を選択してください。</p>
+<div class="mb-4">
+    <a href="{% url 'team_analytics:dashboard' %}" class="btn btn-outline-secondary">
+        ← チーム分析ダッシュボードに戻る
+    </a>
+</div>
 
-<form method="get" action="{% url 'team_analytics:player_comparison' %}">
-    <div class="form-group" style="margin-bottom: 20px;">
-        <label for="player_id">部員:</label>
-        <select name="player_id" id="player_id" class="form-control" required>
+<p class="text-muted">
+    チーム平均と個人の記録をグラフで比較するページです。<br>
+    以下のリストから部員を選択して、比較を開始してください。
+</p>
+
+<form method="get" action="{% url 'team_analytics:player_comparison' %}" class="mt-3">
+    <div class="form-group mb-3">
+        <label for="player_id" class="form-label">部員</label>
+        <select name="player_id" id="player_id" class="form-select" required>
             <option value="" disabled selected>-- 部員を選択 --</option>
             {% for player in players %}
             <option value="{{ player.id }}">{{ player|display_name }}</option>

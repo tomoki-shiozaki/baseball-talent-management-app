@@ -10,17 +10,26 @@
 
 {% block content %}
 
-{{ labels|json_script:"labels" }}
-{{ measurement_values|json_script:"measurement-values" }}
-
 <h1>チーム分析ダッシュボード</h1>
 
+<!-- ページ概要 -->
+<p class="text-muted">
+    このページでは、チーム全体の平均記録を各種目ごとに可視化しています。<br>
+    チームのパフォーマンス推移や強化ポイントを把握するために活用できます。
+</p>
+<p class="text-muted">
+    部員ごとの記録と比較したい場合は、以下のボタンから比較グラフページへ進んでください。
+</p>
+
 <!-- 比較ページへの遷移ボタン -->
-<div style="margin-bottom: 20px;">
-    <a href="{% url 'team_analytics:comparison_entry' %}" class="btn btn-primary">
-        個人との比較グラフを見る
+<div class="mb-4">
+    <a href="{% url 'team_analytics:comparison_entry' %}" class="btn btn-outline-primary">
+        部員とチーム平均の比較グラフを見る →
     </a>
 </div>
+
+{{ labels|json_script:"labels" }}
+{{ measurement_values|json_script:"measurement-values" }}
 
 <div class="dashboard-grid">
 
