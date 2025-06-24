@@ -117,7 +117,11 @@ class MemberListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return self.request.user.role in ["coach", "director"]
 
     def get_queryset(self):
-        return get_user_model().objects.filter(role="player", status="active")
+        return (
+            get_user_model()
+            .objects.filter(role="player", status="active")
+            .order_by("grade")
+        )
 
 
 class PlayerMeasurementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
