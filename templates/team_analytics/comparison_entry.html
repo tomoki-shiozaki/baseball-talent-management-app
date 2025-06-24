@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load user_extras %}
+
+{% block title %}個人との比較グラフ - 選択{% endblock %}
+
+{% block content %}
+<h1>個人との比較グラフ</h1>
+
+<p>比較対象とする部員を選択してください。</p>
+
+<form method="get" action="{% url 'team_analytics:player_comparison' %}">
+    <div class="form-group" style="margin-bottom: 20px;">
+        <label for="player_id">部員:</label>
+        <select name="player_id" id="player_id" class="form-control" required>
+            <option value="" disabled selected>-- 部員を選択 --</option>
+            {% for player in players %}
+            <option value="{{ player.id }}">{{ player|display_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">比較を開始</button>
+</form>
+
+{% endblock %}

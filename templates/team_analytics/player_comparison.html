@@ -1,26 +1,20 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load user_extras %}
 
-{% block title %}チーム分析ダッシュボード{% endblock title %}
+{% block title %}{{ player.get_full_name }}さんの記録比較{% endblock %}
 
 {% block extra_css %}
-<!-- チーム分析のダッシュボード専用のCSSを読み込む -->
 <link href="{% static 'css/team_analytics/dashboard.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 
+<h1>{{ player|display_name }}さんの記録とチーム平均の比較</h1>
+
 {{ labels|json_script:"labels" }}
-{{ measurement_values|json_script:"measurement-values" }}
-
-<h1>チーム分析ダッシュボード</h1>
-
-<!-- 比較ページへの遷移ボタン -->
-<div style="margin-bottom: 20px;">
-    <a href="{% url 'team_analytics:comparison_entry' %}" class="btn btn-primary">
-        個人との比較グラフを見る
-    </a>
-</div>
+{{ team_values|json_script:"team-values" }}
+{{ player_values|json_script:"player-values" }}
 
 <div class="dashboard-grid">
 
@@ -66,10 +60,9 @@
 
 </div>
 
-{% endblock content %}
+{% endblock %}
 
 {% block extra_js %}
-<!-- JavaScript-->
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-<script src="{% static 'js/team_analytics/dashboard.js' %}"></script>
+<script src="{% static 'js/team_analytics/player_comparison.js' %}" defer></script>
 {% endblock %}
