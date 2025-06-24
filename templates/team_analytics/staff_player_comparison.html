@@ -1,35 +1,40 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load user_extras %}
 
-{% block title %}チーム分析ダッシュボード{% endblock title %}
+{% block title %}{{ player|display_name }}さんの記録比較{% endblock %}
 
 {% block extra_css %}
-<!-- チーム分析のダッシュボード専用のCSSを読み込む -->
 <link href="{% static 'css/team_analytics/dashboard.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 
-<h1>チーム分析ダッシュボード</h1>
-
-<!-- ページ概要 -->
-<p class="text-muted">
-    このページでは、チーム全体の平均記録を各種目ごとに可視化しています。<br>
-    チームのパフォーマンス推移や強化ポイントを把握するために活用できます。
-</p>
-<p class="text-muted">
-    部員ごとの記録と比較したい場合は、以下のボタンから比較グラフページへ進んでください。
-</p>
-
-<!-- 比較ページへの遷移ボタン -->
-<div class="mb-4">
-    <a href="{% url 'team_analytics:comparison_entry' %}" class="btn btn-outline-primary">
-        部員とチーム平均の比較グラフを見る →
-    </a>
-</div>
-
 {{ labels|json_script:"labels" }}
-{{ measurement_values|json_script:"measurement-values" }}
+{{ team_values|json_script:"team-values" }}
+{{ player_values|json_script:"player-values" }}
+
+<h1>{{ player|display_name }}さんの記録とチーム平均の比較</h1>
+<p class="text-muted mb-4">以下のグラフは{{ player|display_name }}さんの測定記録とチーム平均を比較したものです。
+    <br>部員を選択しなおすと、その部員の記録とチーム平均の比較ページに遷移します。
+</p>
+
+<a href="{% url 'team_analytics:staff_dashboard' %}" class="btn btn-secondary mb-3">
+    ← チーム分析ダッシュボードに戻る
+</a>
+
+<form method="get" action="{% url 'team_analytics:staff_player_comparison' %}">
+    <div class="form-group" style="margin-bottom: 20px;">
+        <label for="player_id">部員:</label>
+        <select name="player_id" id="player_id" class="form-select" required>
+            <option value="" disabled selected>-- 部員を選択 --</option>
+            {% for player in player_list %}
+            <option value="{{ player.id }}">{{ player|display_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">比較を開始</button>
+</form>
 
 <div class="dashboard-grid">
 
@@ -75,10 +80,9 @@
 
 </div>
 
-{% endblock content %}
+{% endblock %}
 
 {% block extra_js %}
-<!-- JavaScript-->
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-<script src="{% static 'js/team_analytics/dashboard.js' %}"></script>
+<script src="{% static 'js/team_analytics/player_comparison.js' %}" defer></script>
 {% endblock %}

@@ -12,8 +12,159 @@ User = get_user_model()
 
 
 # Create your views here.
-class DashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
-    template_name = "team_analytics/dashboard.html"
+class PlayerDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    template_name = "team_analytics/player_dashboard.html"
+
+    def test_func(self):
+        return self.request.user.is_player
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        context["player"] = user
+
+        measurement_fields = {
+            "50m走": "sprint_50m",
+            "ベースラン": "base_running",
+            "遠投": "long_throw",
+            "ストレート球速": "straight_ball_speed",
+            "打球速度": "hit_ball_speed",
+            "スイング速度": "swing_speed",
+            "ベンチプレス": "bench_press",
+            "スクワット": "squat",
+        }
+
+        # 個人記録取得
+        player_qs = (
+            Measurement.objects.filter(status="coach_approved", player=user)
+            .annotate(month=TruncMonth("date"))
+            .values("month", *measurement_fields.values())
+            .order_by("month")
+        )
+
+        player_data = {label: {} for label in measurement_fields}
+        all_months = set()
+
+        for row in player_qs:
+            month = row["month"]
+            all_months.add(month)
+            for label, field in measurement_fields.items():
+                value = row.get(field)
+                if value is not None:
+                    player_data[label][month] = value
+
+        # 過去7回分のみ使用
+        recent_months = sorted(all_months)[-7:]
+        labels = [m.strftime("%Y-%m") for m in recent_months]
+
+        # グラフ用データ整形
+        player_values = {
+            label: [player_data[label].get(m, None) for m in recent_months]
+            for label in measurement_fields
+        }
+
+        context.update(
+            {
+                "labels": labels,
+                "measurement_values": player_values,
+                "measurement_labels": list(
+                    measurement_fields.keys()
+                ),  # テンプレートで使用
+            }
+        )
+        return context
+
+
+class PlayerComparisonView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    template_name = "team_analytics/player_comparison.html"
+
+    def test_func(self):
+        return self.request.user.is_player
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        context["player"] = user
+
+        measurement_fields = {
+            "50m走": "sprint_50m",
+            "ベースラン": "base_running",
+            "遠投": "long_throw",
+            "ストレート球速": "straight_ball_speed",
+            "打球速度": "hit_ball_speed",
+            "スイング速度": "swing_speed",
+            "ベンチプレス": "bench_press",
+            "スクワット": "squat",
+        }
+
+        # チーム平均取得
+        team_qs = (
+            Measurement.objects.filter(status="coach_approved")
+            .annotate(month=TruncMonth("date"))
+            .values("month", *measurement_fields.values())
+            .order_by("month")
+        )
+        team_data = {label: defaultdict(list) for label in measurement_fields}
+        for row in team_qs:
+            month = row["month"]
+            for label, field in measurement_fields.items():
+                value = row.get(field)
+                if value is not None:
+                    team_data[label][month].append(value)
+
+        from apps.team_analytics.utils import calc_avg
+
+        team_avg = {
+            label: calc_avg(data_dict) for label, data_dict in team_data.items()
+        }
+
+        # 個人記録取得
+        player_qs = (
+            Measurement.objects.filter(status="coach_approved", player=user)
+            .annotate(month=TruncMonth("date"))
+            .values("month", *measurement_fields.values())
+            .order_by("month")
+        )
+
+        player_data = {label: {} for label in measurement_fields}
+        for row in player_qs:
+            month = row["month"]
+            for label, field in measurement_fields.items():
+                value = row.get(field)
+                if value is not None:
+                    # 各月に1件のみ → 単一値として格納
+                    player_data[label][month] = value
+
+        # 共通の月リスト（過去7回分）
+        all_months = sorted(set().union(*[avg.keys() for avg in team_avg.values()]))
+        recent_months = all_months[-7:]
+        labels = [m.strftime("%Y-%m") for m in recent_months]
+
+        # グラフ用に値の配列を整形
+        team_values = {
+            label: [team_avg[label].get(m, None) for m in recent_months]
+            for label in measurement_fields
+        }
+        player_values = {
+            label: [player_data[label].get(m, None) for m in recent_months]
+            for label in measurement_fields
+        }
+
+        context.update(
+            {
+                "labels": labels,
+                "team_values": team_values,
+                "player_values": player_values,
+            }
+        )
+
+        return context
+
+
+class StaffDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    template_name = "team_analytics/staff_dashboard.html"
 
     def test_func(self):
         return self.request.user.role in ["coach", "director"]
@@ -79,8 +230,8 @@ class DashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         return context
 
 
-class ComparisonEntryView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
-    template_name = "team_analytics/comparison_entry.html"
+class StaffComparisonEntryView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    template_name = "team_analytics/staff_comparison_entry.html"
 
     def test_func(self):
         return self.request.user.role in ["coach", "director"]
@@ -94,8 +245,8 @@ class ComparisonEntryView(LoginRequiredMixin, UserPassesTestMixin, TemplateView)
 
 
 # 部員比較グラフ用ビュー
-class PlayerComparisonView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
-    template_name = "team_analytics/player_comparison.html"
+class StaffPlayerComparisonView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    template_name = "team_analytics/staff_player_comparison.html"
 
     def test_func(self):
         return self.request.user.role in ["coach", "director"]

@@ -1,26 +1,35 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load user_extras %}
 
-{% block title %}{{ player|display_name }}さんの記録比較{% endblock %}
+{% block title %}チーム分析ダッシュボード{% endblock title %}
 
 {% block extra_css %}
+<!-- チーム分析のダッシュボード専用のCSSを読み込む -->
 <link href="{% static 'css/team_analytics/dashboard.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 
-{{ labels|json_script:"labels" }}
-{{ team_values|json_script:"team-values" }}
-{{ player_values|json_script:"player-values" }}
+<h1>チーム分析ダッシュボード</h1>
 
-<h1>{{ player|display_name }}さんの記録とチーム平均の比較</h1>
-<p class="text-muted mb-4">以下のグラフは{{ player|display_name }}さんの測定記録とチーム平均を比較したものです。
+<!-- ページ概要 -->
+<p class="text-muted">
+    このページでは、チーム全体の平均記録を各種目ごとに可視化しています。<br>
+    チームのパフォーマンス推移や強化ポイントを把握するために活用できます。
+</p>
+<p class="text-muted">
+    部員ごとの記録と比較したい場合は、以下のボタンから比較グラフページへ進んでください。
 </p>
 
-<a href="{% url 'team_analytics:player_dashboard' %}" class="btn btn-secondary mb-3">
-    ← 分析ダッシュボードに戻る
-</a>
+<!-- 比較ページへの遷移ボタン -->
+<div class="mb-4">
+    <a href="{% url 'team_analytics:staff_comparison_entry' %}" class="btn btn-outline-primary">
+        部員とチーム平均の比較グラフを見る →
+    </a>
+</div>
+
+{{ labels|json_script:"labels" }}
+{{ measurement_values|json_script:"measurement-values" }}
 
 <div class="dashboard-grid">
 
@@ -66,9 +75,10 @@
 
 </div>
 
-{% endblock %}
+{% endblock content %}
 
 {% block extra_js %}
+<!-- JavaScript-->
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-<script src="{% static 'js/team_analytics/player_comparison.js' %}" defer></script>
+<script src="{% static 'js/team_analytics/dashboard.js' %}"></script>
 {% endblock %}

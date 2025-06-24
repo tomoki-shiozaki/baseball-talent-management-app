@@ -22,7 +22,7 @@ class TestDashboardView(TestCase):
         self.player = User.objects.create_user(
             username="player", password="pass1234", role="player"
         )
-        self.url = reverse("team_analytics:dashboard")
+        self.url = reverse("team_analytics:staff_dashboard")
 
     def test_redirect_if_not_logged_in(self):
         response = self.client.get(self.url)
