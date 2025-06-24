@@ -11,7 +11,7 @@ function createLineChart(canvasId, title, playerData, teamData, yAxisTitle) {
       labels: labels,
       datasets: [
         {
-          label: '個人平均',
+          label: '個人',
           data: playerData,
           borderColor: 'rgba(75, 192, 192, 1)',
           backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -19,7 +19,6 @@ function createLineChart(canvasId, title, playerData, teamData, yAxisTitle) {
           tension: 0,
           pointRadius: 5,
           pointHoverRadius: 7,
-          borderDash: [5, 5], // 点線で視覚的に分ける
           pointStyle: 'circle',
         },
         {
@@ -33,6 +32,7 @@ function createLineChart(canvasId, title, playerData, teamData, yAxisTitle) {
           pointRadius: 6,
           pointHoverRadius: 8,
           pointStyle: 'triangle',
+          borderDash: [5, 5],
         }
       ]
 
