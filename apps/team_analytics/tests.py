@@ -93,7 +93,148 @@ class TestPlayerDashboardView(TestCase):
         self.assertEqual(sprint_values[0], 6.6)
 
 
-class TestDashboardView(TestCase):
+class TestPlayerComparisonView(TestCase):
+
+    def setUp(self):
+        # ユーザー作成
+        self.player = User.objects.create_user(
+            username="player", password="pass1234", role="player"
+        )
+        self.other_player = User.objects.create_user(
+            username="other_player", password="pass1234", role="player"
+        )
+        self.coach = User.objects.create_user(
+            username="coach", password="pass1234", role="coach"
+        )
+        self.director = User.objects.create_user(
+            username="director", password="pass1234", role="director"
+        )
+        self.manager = User.objects.create_user(
+            username="manager", password="pass1234", role="manager"
+        )
+
+        self.url = reverse("team_analytics:player_comparison")
+
+        Measurement.objects.create(
+            player=self.player,
+            sprint_50m=7.0,
+            base_running=15.0,
+            long_throw=80,
+            straight_ball_speed=130,
+            hit_ball_speed=100,
+            swing_speed=90,
+            bench_press=70,
+            squat=90,
+            status="coach_approved",
+            date=datetime(2025, 6, 1),
+        )
+        Measurement.objects.create(
+            player=self.other_player,
+            sprint_50m=7.5,
+            base_running=14.5,
+            long_throw=85,
+            straight_ball_speed=135,
+            hit_ball_speed=105,
+            swing_speed=95,
+            bench_press=75,
+            squat=95,
+            status="coach_approved",
+            date=datetime(2025, 6, 1),
+        )
+        Measurement.objects.create(
+            player=self.player,
+            sprint_50m=6.4,
+            base_running=15.2,
+            long_throw=82,
+            straight_ball_speed=132,
+            hit_ball_speed=102,
+            swing_speed=92,
+            bench_press=72,
+            squat=92,
+            status="coach_approved",
+            date=datetime(2025, 4, 1),
+        )
+
+    def test_redirect_if_not_logged_in(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+
+    def test_access_denied_to_manager_coach_and_director(self):
+        for user in [self.manager, self.coach, self.director]:
+            self.client.login(username=user.username, password="pass1234")
+            response = self.client.get(self.url)
+            self.assertEqual(response.status_code, 403)
+
+    def test_access_permission(self):
+        user = self.player
+        self.client.login(username=user.username, password="pass1234")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_context_data_for_player(self):
+        self.client.login(username="player", password="pass1234")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+        self.assertIn("player", response.context)
+        self.assertEqual(response.context["player"], self.player)
+
+        # labels のフォーマット確認
+        labels = response.context.get("labels", [])
+        self.assertTrue(all(isinstance(label, str) for label in labels))
+        for label in labels:
+            self.assertRegex(label, r"^\d{4}-\d{2}$")
+
+        # team_values と player_values のキー確認
+        measurement_fields = {
+            "50m走",
+            "ベースラン",
+            "遠投",
+            "ストレート球速",
+            "打球速度",
+            "スイング速度",
+            "ベンチプレス",
+            "スクワット",
+        }
+        self.assertEqual(
+            set(response.context["team_values"].keys()), measurement_fields
+        )
+        self.assertEqual(
+            set(response.context["player_values"].keys()), measurement_fields
+        )
+
+        # いずれかの値が None ではないこと確認
+        some_label = next(iter(measurement_fields))
+        team_vals = response.context["team_values"][some_label]
+        player_vals = response.context["player_values"][some_label]
+        self.assertTrue(any(v is not None for v in team_vals))
+        self.assertTrue(any(v is not None for v in player_vals))
+
+        # チームの平均値のテスト
+        team_values = response.context["team_values"]
+        self.assertIsInstance(team_values["50m走"], list)
+        self.assertEqual(len(team_values["50m走"]), 2)
+
+        team_sprint_values = team_values["50m走"]
+        # sprint_50m の2025-06の平均値が (7.0 + 7.5)/2 = 7.25 になっているか
+        self.assertEqual(team_sprint_values[1], 7.25)
+        # sprint_50m の2025-04の平均値が 6.4 になっているか
+        self.assertEqual(team_sprint_values[0], 6.4)
+
+        # 部員の測定値のテスト
+        player_values = response.context["player_values"]
+        self.assertIsInstance(player_values["50m走"], list)
+        self.assertEqual(len(player_values["50m走"]), 2)
+
+        player_sprint_values = player_values["50m走"]
+        # sprint_50m の2025-06のplayerの測定値が 7.0 になっているか
+        self.assertEqual(player_sprint_values[1], 7.0)
+        # sprint_50m の2025-04のplayerの測定値が 6.4 になっているか
+        self.assertEqual(player_sprint_values[0], 6.4)
+
+
+class TestStaffDashboardView(TestCase):
     def setUp(self):
         self.coach = User.objects.create_user(
             username="coach", password="pass1234", role="coach"

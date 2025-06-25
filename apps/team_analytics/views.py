@@ -1,6 +1,7 @@
 from collections import defaultdict
-from typing import Dict
 from datetime import date
+from typing import Dict
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import TemplateView
@@ -116,8 +117,6 @@ class PlayerComparisonView(LoginRequiredMixin, UserPassesTestMixin, TemplateView
                 value = row.get(field)
                 if value is not None:
                     team_data[label][month].append(value)
-
-        from apps.team_analytics.utils import calc_avg
 
         team_avg = {
             label: calc_avg(data_dict) for label, data_dict in team_data.items()
