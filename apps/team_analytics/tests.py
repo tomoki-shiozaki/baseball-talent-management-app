@@ -330,3 +330,90 @@ class TestStaffDashboardView(TestCase):
             self.assertAlmostEqual(long_throw_values[0], 30)
 
             self.client.logout()
+
+
+class TestStaffComparisonEntryView(TestCase):
+    def setUp(self):
+        # ロールごとのユーザーを作成
+        self.coach = User.objects.create_user(
+            username="coach", password="pass1234", role="coach"
+        )
+        self.director = User.objects.create_user(
+            username="director", password="pass1234", role="director"
+        )
+        self.player = User.objects.create_user(
+            username="player", password="pass1234", role="player"
+        )
+        self.manager = User.objects.create_user(
+            username="manager", password="pass1234", role="manager"
+        )
+
+        # 選手データ（並び替え検証用）
+        self.p1 = User.objects.create_user(
+            username="p1",
+            password="pass1234",
+            role="player",
+            grade=2,
+            last_name="Tanaka",
+            first_name="Ichiro",
+        )
+        self.p2 = User.objects.create_user(
+            username="p2",
+            password="pass1234",
+            role="player",
+            grade=1,
+            last_name="Abe",
+            first_name="Kenta",
+        )
+        self.p3 = User.objects.create_user(
+            username="p3",
+            password="pass1234",
+            role="player",
+            grade=2,
+            last_name="Tanaka",
+            first_name="Jiro",
+        )
+        self.inactive_player = User.objects.create_user(
+            username="inactive",
+            password="pass1234",
+            role="player",
+            grade=3,
+            last_name="Inactive",
+            first_name="User",
+            is_active=False,
+        )
+
+        self.url = reverse("team_analytics:staff_comparison_entry")
+
+    def test_redirect_if_not_logged_in(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+
+    def test_access_denied_for_non_staff_roles(self):
+        for user in [self.player, self.manager]:
+            self.client.login(username=user.username, password="pass1234")
+            response = self.client.get(self.url)
+            self.assertEqual(response.status_code, 403)
+
+    def test_access_allowed_for_coach_and_director(self):
+        for user in [self.coach, self.director]:
+            self.client.login(username=user.username, password="pass1234")
+            response = self.client.get(self.url)
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(
+                response, "team_analytics/staff_comparison_entry.html"
+            )
+
+    def test_context_contains_ordered_active_players(self):
+        for user in [self.coach, self.director]:
+            self.client.login(username=user.username, password="pass1234")
+            response = self.client.get(self.url)
+            self.assertEqual(response.status_code, 200)
+
+            players = response.context["players"]
+            self.assertEqual(len(players), 4)  # 非アクティブは含まれない
+
+            # 並び順: grade 昇順 → last_name → first_name。Noneが最初にくる
+            expected_order = [self.player, self.p2, self.p1, self.p3]
+            self.assertEqual(list(players), expected_order)
