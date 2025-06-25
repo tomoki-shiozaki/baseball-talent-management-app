@@ -1,4 +1,6 @@
 from collections import defaultdict
+from typing import Dict
+from datetime import date
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import TemplateView
@@ -43,23 +45,27 @@ class PlayerDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView)
             .order_by("month")
         )
 
-        player_data = {label: {} for label in measurement_fields}
-        all_months = set()
+        # 月別データ構築
+        player_data: Dict[str, Dict[date, float]] = {}
+        months_in_order = []
 
         for row in player_qs:
             month = row["month"]
-            all_months.add(month)
+            if month not in months_in_order:
+                months_in_order.append(month)
             for label, field in measurement_fields.items():
                 value = row.get(field)
                 if value is not None:
+                    if label not in player_data:
+                        player_data[label] = {}
                     player_data[label][month] = value
 
         # 過去7回分のみ使用
-        recent_months = sorted(all_months)[-7:]
+        recent_months = months_in_order[-7:]
         labels = [m.strftime("%Y-%m") for m in recent_months]
 
         # グラフ用データ整形
-        player_values = {
+        measurement_values = {
             label: [player_data[label].get(m, None) for m in recent_months]
             for label in measurement_fields
         }
@@ -67,10 +73,7 @@ class PlayerDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView)
         context.update(
             {
                 "labels": labels,
-                "measurement_values": player_values,
-                "measurement_labels": list(
-                    measurement_fields.keys()
-                ),  # テンプレートで使用
+                "measurement_values": measurement_values,
             }
         )
         return context
