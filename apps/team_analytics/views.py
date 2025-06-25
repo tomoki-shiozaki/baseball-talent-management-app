@@ -289,8 +289,6 @@ class StaffPlayerComparisonView(LoginRequiredMixin, UserPassesTestMixin, Templat
                 if value is not None:
                     team_data[label][month].append(value)
 
-        from apps.team_analytics.utils import calc_avg
-
         team_avg = {
             label: calc_avg(data_dict) for label, data_dict in team_data.items()
         }
