@@ -7,6 +7,7 @@
 
 {% block content %}
 <h2>{{ player|display_name }} さんの測定記録一覧</h2>
+<a href="{% url 'measurements:member_list' %}" class="btn btn-secondary mb-3">部員一覧に戻る</a>
 
 <p>
     表示:

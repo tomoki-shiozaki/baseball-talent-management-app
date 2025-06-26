@@ -6,14 +6,15 @@
 - [https://quest-1-main.onrender.com/](https://quest-1-main.onrender.com/)
 
 ## 🔐 動作確認用アカウント情報
-| ロール | ユーザー名 | パスワード |
-|--------|------------|------------|
-| マネージャー | manager1 | dev_manager1_123 | 
-| 部員 | player1  | dev_player1_123   |
-| 部員 | player2 | dev_player2_123 | 
-| コーチ | coach1 | dev_coach1_123 |
-| 監督 | director | dev_director_123 | 
-| (管理者) | superuser | dev_superuser_123 |
+| ロール   | ユーザー名  | パスワード         | 名前       |
+|----------|-------------|--------------------|------------|
+| マネージャー | manager1    | dev_manager1_123   | 田中 花子 |
+| 部員     | player1     | dev_player1_123    | 渡辺 蒼 |
+| 部員     | player2     | dev_player2_123    | 吉田 翔太 |
+| 部員     | player3     | dev_player3_123    | 渡辺 樹 |
+| コーチ   | coach1      | dev_coach1_123     | 田中 太郎 |
+| 監督     | director    | dev_director_123   | 田中 次郎 |
+| (管理者) | superuser   | dev_superuser_123  | - |
 - superuserはDjango管理サイト(`https://quest-1-main.onrender.com/admin/`)の管理者アカウントです
 
 ## 🚀 デプロイ手順
@@ -46,8 +47,9 @@
 - 🗃 [ER図（データベース設計）](doc/README.md)
 - 📚 [アプリケーションの利用マニュアル](doc/manual.md)
 - 🎤 プレゼンテーション資料（課題1・2、工夫点、感想を含む）
-  - 📄 [Markdown形式](doc/presentation/slides/presentation.md)
-  - 📄 [PDF形式](doc/presentation/slides/presentation.pdf)
+  - 📄 [PDF形式](doc/presentation/slides/presentation.pdf) ← スライド形式で閲覧できます
+  - 📄 [Markdown形式](doc/presentation/slides/presentation.md) ※Marp形式。ブラウザでプレゼン形式で閲覧する場合は、PDF版をご覧ください
+  
 
 ## 📝 備考
 - アプリは**指定期日まで稼働**させ続けます。

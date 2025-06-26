@@ -220,7 +220,7 @@ class CoachApprovalCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateVie
         return response
 
     def get_success_url(self):
-        return reverse_lazy("home")
+        return reverse_lazy("approvals:coach_pending_approvals")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load user_extras %}
+
+{% block title %}{{ player|display_name }}さんの記録比較{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/team_analytics/dashboard.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+{{ labels|json_script:"labels" }}
+{{ team_values|json_script:"team-values" }}
+{{ player_values|json_script:"player-values" }}
+
+<h1>{{ player|display_name }}さんの記録とチーム平均の比較</h1>
+<p class="text-muted mb-4">以下のグラフは{{ player|display_name }}さんの測定記録とチーム平均を比較したものです。
+</p>
+
+<a href="{% url 'team_analytics:player_dashboard' %}" class="btn btn-secondary mb-3">
+    ← 分析ダッシュボードに戻る
+</a>
+
+<div class="dashboard-grid">
+
+    <!-- 走力セクション -->
+    <section class="dashboard-card">
+        <h2>🏃‍♂️ 走力（50m走）</h2>
+        <canvas id="sprintChart"></canvas>
+    </section>
+    <section class="dashboard-card">
+        <h2>🏃‍♂️ 走力（ベースランニング）</h2>
+        <canvas id="baseRunningChart"></canvas>
+    </section>
+
+    <!-- 肩力セクション -->
+    <section class="dashboard-card">
+        <h2>🤾 肩力（遠投）</h2>
+        <canvas id="longThrowChart"></canvas>
+    </section>
+    <section class="dashboard-card">
+        <h2>🤾 肩力（ストレート球速）</h2>
+        <canvas id="straightBallSpeedChart"></canvas>
+    </section>
+
+    <!-- 打力セクション -->
+    <section class="dashboard-card">
+        <h2>⚾ 打力（打球速度）</h2>
+        <canvas id="hitBallSpeedChart"></canvas>
+    </section>
+    <section class="dashboard-card">
+        <h2>⚾ 打力（スイング速度）</h2>
+        <canvas id="swingSpeedChart"></canvas>
+    </section>
+
+    <!-- 筋力セクション -->
+    <section class="dashboard-card">
+        <h2>💪 筋力（ベンチプレス）</h2>
+        <canvas id="benchPressChart"></canvas>
+    </section>
+    <section class="dashboard-card">
+        <h2>💪 筋力（スクワット）</h2>
+        <canvas id="squatChart"></canvas>
+    </section>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+<script src="{% static 'js/team_analytics/player_comparison.js' %}" defer></script>
+{% endblock %}

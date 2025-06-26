@@ -529,7 +529,7 @@ class TestCoachApprovalCreateView(TestCase):
         )
 
         self.measurement.refresh_from_db()
-        self.assertRedirects(response, reverse("home"))
+        self.assertRedirects(response, reverse("approvals:coach_pending_approvals"))
 
         approval = MeasurementApproval.objects.get(measurement=self.measurement)
         self.assertEqual(approval.status, "approved")
