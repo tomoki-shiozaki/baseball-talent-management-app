@@ -29,7 +29,9 @@
         <select name="player_id" id="player_id" class="form-select" required>
             <option value="" disabled selected>-- 部員を選択 --</option>
             {% for player in player_list %}
-            <option value="{{ player.id }}">{{ player|display_name }}</option>
+            <option value="{{ player.id }}">{{ player|display_name }}
+                <span class="text-muted">（{{ player.grade }}年）
+            </option>
             {% endfor %}
         </select>
     </div>
