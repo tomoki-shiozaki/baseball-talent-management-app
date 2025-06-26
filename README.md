@@ -47,8 +47,9 @@
 - 🗃 [ER図（データベース設計）](doc/README.md)
 - 📚 [アプリケーションの利用マニュアル](doc/manual.md)
 - 🎤 プレゼンテーション資料（課題1・2、工夫点、感想を含む）
-  - 📄 [Markdown形式](doc/presentation/slides/presentation.md)
-  - 📄 [PDF形式](doc/presentation/slides/presentation.pdf)
+  - 📄 [PDF形式](doc/presentation/slides/presentation.pdf) ← スライド形式で閲覧できます
+  - 📄 [Markdown形式](doc/presentation/slides/presentation.md) ※Marp形式。ブラウザでプレゼン形式で閲覧する場合は、PDF版をご覧ください
+  
 
 ## 📝 備考
 - アプリは**指定期日まで稼働**させ続けます。
