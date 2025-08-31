@@ -1,6 +1,9 @@
-# quest_1
+# 高校野球部 タレントマネジメントシステム
 
-# 神奈川県立 JPT 高校野球部 タレントマネジメントシステム
+[![Build Status](https://github.com/tomoki-shiozaki/baseball-talent-management-app/actions/workflows/ci.yml/badge.svg)](https://github.com/tomoki-shiozaki/baseball-talent-management-app/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+## 概要
 
 ## 🌐 デプロイ先 URL
 
