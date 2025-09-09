@@ -1,6 +1,7 @@
 # 高校野球部 タレントマネジメントシステム
 
 [![Build Status](https://github.com/tomoki-shiozaki/baseball-talent-management-app/actions/workflows/ci.yml/badge.svg)](https://github.com/tomoki-shiozaki/baseball-talent-management-app/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/tomoki-shiozaki/baseball-talent-management-app/graph/badge.svg?token=0OO33U5EZZ)](https://codecov.io/gh/tomoki-shiozaki/baseball-talent-management-app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## 概要

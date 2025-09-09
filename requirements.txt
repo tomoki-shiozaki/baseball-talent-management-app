@@ -1,4 +1,5 @@
 asgiref==3.8.1
+coverage==7.10.6
 crispy-bootstrap5==2025.4
 dj-database-url==2.3.0
 dj-email-url==1.0.6
