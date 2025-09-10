@@ -26,6 +26,12 @@ jobs:
           pip install -r requirements.txt
       - name: Set environment variable SECRET_KEY
         run: echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV # GitHubのシークレットから設定
-      - name: Run Tests
+      - name: Run tests with coverage
         run: |
-          python manage.py test  # テスト実行
+          coverage run --source='.' manage.py test
+          coverage xml -o coverage.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.xml
